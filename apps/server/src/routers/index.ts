@@ -1,7 +1,4 @@
-import {
-  protectedProcedure, publicProcedure,
-  router,
-} from "../lib/trpc";
+import { protectedProcedure, publicProcedure, router } from "../lib/trpc";
 
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {
@@ -10,7 +7,7 @@ export const appRouter = router({
   privateData: protectedProcedure.query(({ ctx }) => {
     return {
       message: "This is private",
-      user: ctx.session.user,
+      user: ctx.session,
     };
   }),
 });

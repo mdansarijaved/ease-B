@@ -1,9 +1,17 @@
+enum Role {
+  USER
+  MENTOR
+  ADMIN
+  SUPER_ADMIN
+}
+
 model User {
   id            String    @id @map("_id")
   name          String
   email         String
   emailVerified Boolean
   image         String?
+  role          Role      @default(USER)
   createdAt     DateTime
   updatedAt     DateTime
   sessions      Session[]

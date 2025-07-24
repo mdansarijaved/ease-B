@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { authClient } from "@/lib/auth-client";
 import { useQuery } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
@@ -25,6 +25,7 @@ export default function Dashboard() {
     <div>
       <h1>Dashboard</h1>
       <p>Welcome {session?.user.name}</p>
+      {session?.user.role}
       <p>privateData: {privateData.data?.message}</p>
     </div>
   );
