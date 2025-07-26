@@ -52,6 +52,11 @@ export default function SignUpForm({
   if (isPending) {
     return <Loader />;
   }
+  const signIn = async () => {
+    const data = await authClient.signIn.social({
+      provider: "google",
+    });
+  };
 
   return (
     <div className="mx-auto w-full mt-10 max-w-md p-6">
@@ -145,6 +150,8 @@ export default function SignUpForm({
           )}
         </form.Subscribe>
       </form>
+
+      <Button onClick={signIn}>Sign In with Google</Button>
 
       <div className="mt-4 text-center">
         <Button

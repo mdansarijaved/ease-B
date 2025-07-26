@@ -4,6 +4,7 @@ import prisma from "../../prisma";
 import { customSession } from "better-auth/plugins";
 import { fetchUserRole } from "../services/user";
 import { resend } from "./email";
+import { google } from "better-auth/social-providers";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -36,6 +37,19 @@ export const auth = betterAuth({
     sendOnSignUp: true,
     autoSignInAfterVerification: true,
     expiresIn: 3600, // 1 hour
+  },
+  socialProviders: {
+    google: {
+      prompt: "select_account",
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    },
+  },
+  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3001",
+  redirects: {
+    signIn: process.env.FRONTEND_URL || "http://localhost:3001", // Redirect to frontend after sign in
+    signUp: process.env.FRONTEND_URL || "http://localhost:3001", // Redirect to frontend after sign up
+    error: `${process.env.FRONTEND_URL || "http://localhost:3001"}/auth/error`,
   },
   plugins: [
     customSession(async ({ user, session }) => {

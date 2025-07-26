@@ -20,7 +20,6 @@ export const usersRouter = router({
       })
     )
     .mutation(async ({ input }) => {
-      // Create user logic
       return { user: { id: "1", ...input } };
     }),
 });

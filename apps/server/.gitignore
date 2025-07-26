@@ -43,7 +43,7 @@ lerna-debug.log*
 # misc
 .DS_Store
 *.pem
-
+todo.md
 # local db
 *.db*
 
