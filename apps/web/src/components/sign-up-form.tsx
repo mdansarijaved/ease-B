@@ -37,7 +37,7 @@ export default function SignUpForm({
           onError: (error) => {
             toast.error(error.error.message);
           },
-        },
+        }
       );
     },
     validators: {
