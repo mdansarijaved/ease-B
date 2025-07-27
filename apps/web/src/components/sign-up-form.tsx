@@ -7,6 +7,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { useRouter } from "next/navigation";
+import { signIn } from "@/lib/oauth";
 
 export default function SignUpForm({
   onSwitchToSignIn,
@@ -52,12 +53,6 @@ export default function SignUpForm({
   if (isPending) {
     return <Loader />;
   }
-  const signIn = async () => {
-    const data = await authClient.signIn.social({
-      provider: "google",
-      // callbackURL: "http://localhost:3001",
-    });
-  };
 
   return (
     <div className="mx-auto w-full mt-10 max-w-md p-6">

@@ -7,13 +7,14 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { useRouter } from "next/navigation";
+import { signIn } from "@/lib/oauth";
 
 export default function SignInForm({
   onSwitchToSignUp,
 }: {
   onSwitchToSignUp: () => void;
 }) {
-  const router = useRouter()
+  const router = useRouter();
   const { isPending } = authClient.useSession();
 
   const form = useForm({
@@ -29,13 +30,13 @@ export default function SignInForm({
         },
         {
           onSuccess: () => {
-            router.push("/dashboard")
+            router.push("/dashboard");
             toast.success("Sign in successful");
           },
           onError: (error) => {
             toast.error(error.error.message);
           },
-        },
+        }
       );
     },
     validators: {
@@ -120,6 +121,7 @@ export default function SignInForm({
           )}
         </form.Subscribe>
       </form>
+      <Button onClick={signIn}>Sign In with Google</Button>
 
       <div className="mt-4 text-center">
         <Button

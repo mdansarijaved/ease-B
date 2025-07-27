@@ -15,6 +15,12 @@ export const auth = betterAuth({
     enabled: true,
     requireEmailVerification: true,
   },
+
+  account: {
+    accountLinking: {
+      enabled: true,
+    },
+  },
   emailVerification: {
     sendVerificationEmail: async ({ user, url, token }) => {
       console.log("URL", url);
@@ -36,7 +42,7 @@ export const auth = betterAuth({
     },
     sendOnSignUp: true,
     autoSignInAfterVerification: true,
-    expiresIn: 3600, // 1 hour
+    expiresIn: 3600,
   },
   socialProviders: {
     google: {
