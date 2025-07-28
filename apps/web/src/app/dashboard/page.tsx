@@ -11,6 +11,8 @@ export default function Dashboard() {
 
   const privateData = useQuery(trpc.privateData.queryOptions());
 
+  const users = useQuery(trpc.user.getAll.queryOptions());
+
   useEffect(() => {
     if (!session && !isPending) {
       router.push("/login");
@@ -27,6 +29,7 @@ export default function Dashboard() {
       <p>Welcome {session?.user.name}</p>
       {session?.user.role}
       <p>privateData: {privateData.data?.message}</p>
+      <p>users: {JSON.stringify(users.data, null, 2)}</p>
     </div>
   );
 }

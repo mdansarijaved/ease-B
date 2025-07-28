@@ -13,6 +13,7 @@ enum AppointmentStatus {
     CONFIRMED
     CANCELLED
     COMPLETED
+    NO_SHOW
 }
 
 enum WebinarStatus {
@@ -31,6 +32,15 @@ model Skills {
     mentorSkills MentorSkills[]
 }
 
+model Services {
+    id             String           @id @default(uuid())
+    name           String           @unique
+    description    String
+    createdAt      DateTime         @default(now())
+    updatedAt      DateTime         @updatedAt
+    mentorServices MentorServices[]
+}
+
 model Mentor {
     id           String               @id @default(uuid())
     about        String
@@ -38,13 +48,13 @@ model Mentor {
     languages    String[]
     timezone     String
     availability MentorAvailability[]
-    services     MentorService[]
+    services     MentorServices[]
     webinars     Webinar[]
+    appointments Appointment[]
     userId       String               @unique
     user         User                 @relation(fields: [userId], references: [id])
     createdAt    DateTime             @default(now())
     updatedAt    DateTime             @updatedAt
-    Appointment  Appointment[]
 }
 
 model MentorSkills {
@@ -53,6 +63,24 @@ model MentorSkills {
     mentor   Mentor @relation(fields: [mentorId], references: [id], onDelete: Cascade)
     skillId  String
     skill    Skills @relation(fields: [skillId], references: [id], onDelete: Cascade)
+}
+
+model MentorServices {
+    id           String        @id @default(uuid())
+    mentorId     String
+    mentor       Mentor        @relation(fields: [mentorId], references: [id], onDelete: Cascade)
+    serviceId    String
+    service      Services      @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+    price        Int
+    currency     String        @default("USD")
+    duration     Int // Duration in minutes
+    isActive     Boolean       @default(true)
+    createdAt    DateTime      @default(now())
+    updatedAt    DateTime      @updatedAt
+    appointments Appointment[]
+
+    @@unique([mentorId, serviceId])
+    @@map("mentor_services")
 }
 
 model MentorAvailability {
@@ -70,29 +98,10 @@ model MentorAvailability {
     @@map("mentor_availability")
 }
 
-model MentorService {
-    id          String        @id @default(uuid())
-    mentorId    String
-    mentor      Mentor        @relation(fields: [mentorId], references: [id], onDelete: Cascade)
-    serviceType String
-    title       String
-    description String?
-    price       Int
-    currency    String
-    duration    Int
-    isActive    Boolean       @default(true)
-    createdAt   DateTime      @default(now())
-    updatedAt   DateTime      @updatedAt
-    Appointment Appointment[]
-
-    @@unique([mentorId, serviceType])
-    @@map("mentor_services")
-}
-
 model Webinar {
-    id           String        @id @default(uuid())
+    id           String            @id @default(uuid())
     mentorId     String
-    mentor       Mentor        @relation(fields: [mentorId], references: [id], onDelete: Cascade)
+    mentor       Mentor            @relation(fields: [mentorId], references: [id], onDelete: Cascade)
     title        String
     description  String?
     price        Int
@@ -100,27 +109,51 @@ model Webinar {
     maxAttendees Int?
     scheduledAt  DateTime
     duration     Int
-    status       WebinarStatus @default(SCHEDULED)
+    status       WebinarStatus     @default(SCHEDULED)
     meetingLink  String?
     recordingUrl String?
-    createdAt    DateTime      @default(now())
-    updatedAt    DateTime      @updatedAt
-    Appointment  Appointment[]
+    attendees    WebinarAttendee[]
+    appointments Appointment[]
+    createdAt    DateTime          @default(now())
+    updatedAt    DateTime          @updatedAt
 
     @@map("webinars")
 }
 
+model WebinarAttendee {
+    id        String    @id @default(uuid())
+    webinarId String
+    webinar   Webinar   @relation(fields: [webinarId], references: [id], onDelete: Cascade)
+    userId    String
+    user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    status    String    @default("REGISTERED")
+    joinedAt  DateTime?
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+
+    @@unique([webinarId, userId])
+    @@map("webinar_attendees")
+}
+
 model Appointment {
-    id        String            @id @default(uuid())
-    mentorId  String
-    mentor    Mentor            @relation(fields: [mentorId], references: [id], onDelete: Cascade)
-    menteeId  String
-    mentee    User              @relation(fields: [menteeId], references: [id], onDelete: Cascade)
-    serviceId String
-    service   MentorService     @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-    status    AppointmentStatus @default(PENDING)
-    webinarId String?
-    webinar   Webinar?          @relation(fields: [webinarId], references: [id])
-    createdAt DateTime          @default(now())
-    updatedAt DateTime          @updatedAt
+    id          String            @id @default(uuid())
+    mentorId    String
+    mentor      Mentor            @relation(fields: [mentorId], references: [id], onDelete: Cascade)
+    userId      String
+    user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+    serviceId   String?
+    service     MentorServices?   @relation(fields: [serviceId], references: [id])
+    webinarId   String?
+    webinar     Webinar?          @relation(fields: [webinarId], references: [id])
+    scheduledAt DateTime
+    duration    Int
+    status      AppointmentStatus @default(PENDING)
+    notes       String?
+    meetingLink String?
+    rating      Int?
+    review      String?
+    createdAt   DateTime          @default(now())
+    updatedAt   DateTime          @updatedAt
+
+    @@map("appointments")
 }

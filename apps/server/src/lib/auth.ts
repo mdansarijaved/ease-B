@@ -4,7 +4,6 @@ import prisma from "../../prisma";
 import { customSession } from "better-auth/plugins";
 import { fetchUserRole } from "../services/user";
 import { resend } from "./email";
-import { google } from "better-auth/social-providers";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -23,8 +22,6 @@ export const auth = betterAuth({
   },
   emailVerification: {
     sendVerificationEmail: async ({ user, url, token }) => {
-      console.log("URL", url);
-      console.log("Token", token);
       const urlObj = new URL(url);
       urlObj.searchParams.set("callbackURL", "/dashboard?welcome=true");
       url = urlObj.toString();
@@ -34,11 +31,6 @@ export const auth = betterAuth({
         subject: "Verify your email",
         html: `<p>Click <a href="${url}">here</a> to verify your email</p>`,
       });
-
-      console.log("Data", data);
-      if (error) {
-        console.error(error);
-      }
     },
     sendOnSignUp: true,
     autoSignInAfterVerification: true,
@@ -46,7 +38,6 @@ export const auth = betterAuth({
   },
   socialProviders: {
     google: {
-      prompt: "select_account",
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },

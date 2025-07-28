@@ -61,6 +61,60 @@ export type Account = Prisma.AccountModel
  * 
  */
 export type Verification = Prisma.VerificationModel
+/**
+ * Model Skills
+ * 
+ */
+export type Skills = Prisma.SkillsModel
+/**
+ * Model Services
+ * 
+ */
+export type Services = Prisma.ServicesModel
+/**
+ * Model Mentor
+ * 
+ */
+export type Mentor = Prisma.MentorModel
+/**
+ * Model MentorSkills
+ * 
+ */
+export type MentorSkills = Prisma.MentorSkillsModel
+/**
+ * Model MentorServices
+ * 
+ */
+export type MentorServices = Prisma.MentorServicesModel
+/**
+ * Model MentorAvailability
+ * 
+ */
+export type MentorAvailability = Prisma.MentorAvailabilityModel
+/**
+ * Model Webinar
+ * 
+ */
+export type Webinar = Prisma.WebinarModel
+/**
+ * Model WebinarAttendee
+ * 
+ */
+export type WebinarAttendee = Prisma.WebinarAttendeeModel
+/**
+ * Model Appointment
+ * 
+ */
+export type Appointment = Prisma.AppointmentModel
 
 export type Role = $Enums.Role
 export const Role = $Enums.Role
+
+export type DayOfWeek = $Enums.DayOfWeek
+export const DayOfWeek = $Enums.DayOfWeek
+
+export type AppointmentStatus = $Enums.AppointmentStatus
+export const AppointmentStatus = $Enums.AppointmentStatus
+
+export type WebinarStatus = $Enums.WebinarStatus
+export const WebinarStatus = $Enums.WebinarStatus
