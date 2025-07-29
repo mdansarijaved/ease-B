@@ -25,7 +25,6 @@ export class AppointmentService extends BaseService<Appointment> {
     duration: number;
     notes?: string;
   }): Promise<Appointment> {
-    // Validate mentor exists
     const mentor = await this.mentorRepository.findById(data.mentorId);
     if (!mentor) {
       throw new TRPCError({
@@ -34,7 +33,6 @@ export class AppointmentService extends BaseService<Appointment> {
       });
     }
 
-    // Check for scheduling conflicts
     const conflicts =
       await this.appointmentRepository.findConflictingAppointments(
         data.mentorId,
@@ -49,7 +47,6 @@ export class AppointmentService extends BaseService<Appointment> {
       });
     }
 
-    // Validate appointment is in the future
     if (data.scheduledAt < new Date()) {
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -57,7 +54,6 @@ export class AppointmentService extends BaseService<Appointment> {
       });
     }
 
-    // Create appointment
     const appointment = await this.appointmentRepository.create({
       id: crypto.randomUUID(),
       mentorId: data.mentorId,
@@ -90,7 +86,6 @@ export class AppointmentService extends BaseService<Appointment> {
       });
     }
 
-    // Check authorization
     const isAuthorized =
       appointment.userId === userId ||
       appointment.mentorId === userId ||
@@ -104,7 +99,6 @@ export class AppointmentService extends BaseService<Appointment> {
       });
     }
 
-    // Business logic for status transitions
     if (appointment.status === "COMPLETED" && status !== "COMPLETED") {
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -155,7 +149,6 @@ export class AppointmentService extends BaseService<Appointment> {
       });
     }
 
-    // Only the user who booked the appointment can rate
     if (appointment.userId !== userId) {
       throw new TRPCError({
         code: "FORBIDDEN",
@@ -163,7 +156,6 @@ export class AppointmentService extends BaseService<Appointment> {
       });
     }
 
-    // Can only rate completed appointments
     if (appointment.status !== "COMPLETED") {
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -171,7 +163,6 @@ export class AppointmentService extends BaseService<Appointment> {
       });
     }
 
-    // Validate rating range
     if (rating < 1 || rating > 5) {
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -201,7 +192,6 @@ export class AppointmentService extends BaseService<Appointment> {
       });
     }
 
-    // Check authorization
     const isAuthorized =
       appointment.userId === userId ||
       appointment.mentorId === userId ||
@@ -215,7 +205,6 @@ export class AppointmentService extends BaseService<Appointment> {
       });
     }
 
-    // Cannot reschedule past appointments
     if (appointment.scheduledAt < new Date()) {
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -223,7 +212,6 @@ export class AppointmentService extends BaseService<Appointment> {
       });
     }
 
-    // New time must be in the future
     if (newScheduledAt < new Date()) {
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -231,7 +219,6 @@ export class AppointmentService extends BaseService<Appointment> {
       });
     }
 
-    // Check for conflicts at new time
     const conflicts =
       await this.appointmentRepository.findConflictingAppointments(
         appointment.mentorId,
@@ -239,7 +226,6 @@ export class AppointmentService extends BaseService<Appointment> {
         appointment.duration
       );
 
-    // Exclude the current appointment from conflict check
     const actualConflicts = conflicts.filter(
       (conflict) => conflict.id !== appointmentId
     );
@@ -252,7 +238,7 @@ export class AppointmentService extends BaseService<Appointment> {
 
     return this.appointmentRepository.update(appointmentId, {
       scheduledAt: newScheduledAt,
-      status: "PENDING", // Reset to pending when rescheduled
+      status: "PENDING",
       updatedAt: new Date(),
     });
   }

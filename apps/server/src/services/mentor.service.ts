@@ -37,7 +37,6 @@ export class MentorService extends BaseService<Mentor> {
       endTime: string;
     }>;
   }): Promise<Mentor> {
-    // Check if user is already a mentor
     const existingMentor = await this.mentorRepository.findByUserId(
       data.userId
     );
@@ -48,7 +47,6 @@ export class MentorService extends BaseService<Mentor> {
       });
     }
 
-    // Validate skills exist
     const skillsExist = await Promise.all(
       data.skills.map((skillId) => this.skillsRepository.findById(skillId))
     );
@@ -60,7 +58,6 @@ export class MentorService extends BaseService<Mentor> {
       });
     }
 
-    // Validate services exist
     const servicesExist = await Promise.all(
       data.services.map((service) =>
         this.servicesRepository.findById(service.serviceId)
@@ -74,7 +71,6 @@ export class MentorService extends BaseService<Mentor> {
       });
     }
 
-    // Create mentor profile with all related data
     const mentor = await db.mentor.create({
       data: {
         id: crypto.randomUUID(),
@@ -193,7 +189,6 @@ export class MentorService extends BaseService<Mentor> {
       });
     }
 
-    // Apply additional filters
     if (filters.priceRange) {
       mentors = mentors.filter((mentor) =>
         (mentor as any).services?.some(
@@ -314,12 +309,10 @@ export class MentorService extends BaseService<Mentor> {
       endTime: string;
     }>
   ): Promise<void> {
-    // Remove existing availability
     await db.mentorAvailability.deleteMany({
       where: { mentorId },
     });
 
-    // Add new availability
     await db.mentorAvailability.createMany({
       data: availability.map((avail) => ({
         id: crypto.randomUUID(),

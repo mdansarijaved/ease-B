@@ -4,8 +4,8 @@ import type {
   Mentor,
   DayOfWeek,
   AppointmentStatus,
+  Prisma,
 } from "prisma/generated/client";
-
 export class MentorRepository extends BaseRepository<Mentor> {
   constructor() {
     super(db.mentor);
@@ -26,6 +26,7 @@ export class MentorRepository extends BaseRepository<Mentor> {
             service: true,
           },
         },
+
         availability: true,
         webinars: true,
         appointments: {

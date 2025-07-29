@@ -3,27 +3,17 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { container } from "../lib/container";
 import type { MentorService } from "../services/mentor.service";
+import { DayOfWeek } from "prisma/generated/enums";
 
 const mentorService = container.get<MentorService>("mentorService");
 
 export const mentorRouter = router({
-  // Get all mentors with optional filters
   search: publicProcedure
     .input(
       z.object({
         skills: z.array(z.string()).optional(),
         services: z.array(z.string()).optional(),
-        dayOfWeek: z
-          .enum([
-            "SUNDAY",
-            "MONDAY",
-            "TUESDAY",
-            "WEDNESDAY",
-            "THURSDAY",
-            "FRIDAY",
-            "SATURDAY",
-          ])
-          .optional(),
+        dayOfWeek: z.enum(DayOfWeek).optional(),
         priceRange: z
           .object({
             min: z.number(),
@@ -45,7 +35,6 @@ export const mentorRouter = router({
       }
     }),
 
-  // Get mentor by ID
   getById: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input }) => {
@@ -67,7 +56,6 @@ export const mentorRouter = router({
       }
     }),
 
-  // Get mentor by user ID
   getByUserId: protectedProcedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ input }) => {
@@ -82,7 +70,6 @@ export const mentorRouter = router({
       }
     }),
 
-  // Create mentor profile
   createProfile: protectedProcedure
     .input(
       z.object({
@@ -109,15 +96,7 @@ export const mentorRouter = router({
         availability: z
           .array(
             z.object({
-              dayOfWeek: z.enum([
-                "SUNDAY",
-                "MONDAY",
-                "TUESDAY",
-                "WEDNESDAY",
-                "THURSDAY",
-                "FRIDAY",
-                "SATURDAY",
-              ]),
+              dayOfWeek: z.enum(DayOfWeek),
               startTime: z.string(),
               endTime: z.string(),
             })
@@ -141,7 +120,6 @@ export const mentorRouter = router({
       }
     }),
 
-  // Update mentor profile
   updateProfile: protectedProcedure
     .input(
       z.object({
@@ -171,7 +149,6 @@ export const mentorRouter = router({
       }
     }),
 
-  // Add skill to mentor
   addSkill: protectedProcedure
     .input(
       z.object({
@@ -192,7 +169,6 @@ export const mentorRouter = router({
       }
     }),
 
-  // Remove skill from mentor
   removeSkill: protectedProcedure
     .input(
       z.object({
@@ -213,7 +189,6 @@ export const mentorRouter = router({
       }
     }),
 
-  // Add service to mentor
   addService: protectedProcedure
     .input(
       z.object({
@@ -238,7 +213,6 @@ export const mentorRouter = router({
       }
     }),
 
-  // Update mentor service
   updateService: protectedProcedure
     .input(
       z.object({
@@ -265,22 +239,13 @@ export const mentorRouter = router({
       }
     }),
 
-  // Update mentor availability
   updateAvailability: protectedProcedure
     .input(
       z.object({
         mentorId: z.string(),
         availability: z.array(
           z.object({
-            dayOfWeek: z.enum([
-              "SUNDAY",
-              "MONDAY",
-              "TUESDAY",
-              "WEDNESDAY",
-              "THURSDAY",
-              "FRIDAY",
-              "SATURDAY",
-            ]),
+            dayOfWeek: z.enum(DayOfWeek),
             startTime: z.string(),
             endTime: z.string(),
           })
@@ -303,7 +268,6 @@ export const mentorRouter = router({
       }
     }),
 
-  // Get mentor stats
   getStats: protectedProcedure
     .input(z.object({ mentorId: z.string() }))
     .query(async ({ input }) => {
@@ -319,7 +283,6 @@ export const mentorRouter = router({
       }
     }),
 
-  // Get mentor rating
   getRating: publicProcedure
     .input(z.object({ mentorId: z.string() }))
     .query(async ({ input }) => {

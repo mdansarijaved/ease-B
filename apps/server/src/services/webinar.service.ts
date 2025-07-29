@@ -26,7 +26,6 @@ export class WebinarService extends BaseService<Webinar> {
     scheduledAt: Date;
     duration: number;
   }): Promise<Webinar> {
-    // Validate mentor exists
     const mentor = await this.mentorRepository.findById(data.mentorId);
     if (!mentor) {
       throw new TRPCError({
@@ -35,7 +34,6 @@ export class WebinarService extends BaseService<Webinar> {
       });
     }
 
-    // Validate webinar is scheduled in the future
     if (data.scheduledAt < new Date()) {
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -43,7 +41,6 @@ export class WebinarService extends BaseService<Webinar> {
       });
     }
 
-    // Validate duration
     if (data.duration < 15) {
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -51,7 +48,6 @@ export class WebinarService extends BaseService<Webinar> {
       });
     }
 
-    // Create webinar
     const webinar = await this.webinarRepository.create({
       id: crypto.randomUUID(),
       mentorId: data.mentorId,
@@ -83,7 +79,6 @@ export class WebinarService extends BaseService<Webinar> {
       });
     }
 
-    // Check if mentor owns the webinar
     if (mentorId && webinar.mentorId !== mentorId) {
       throw new TRPCError({
         code: "FORBIDDEN",
@@ -91,7 +86,6 @@ export class WebinarService extends BaseService<Webinar> {
       });
     }
 
-    // Business logic for status transitions
     if (webinar.status === "COMPLETED" && status !== "COMPLETED") {
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -118,7 +112,6 @@ export class WebinarService extends BaseService<Webinar> {
       });
     }
 
-    // Check if webinar is available for registration
     if (webinar.status !== "SCHEDULED") {
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -126,7 +119,6 @@ export class WebinarService extends BaseService<Webinar> {
       });
     }
 
-    // Check if webinar has already passed
     if (webinar.scheduledAt < new Date()) {
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -134,7 +126,6 @@ export class WebinarService extends BaseService<Webinar> {
       });
     }
 
-    // Check if user is already registered
     const existingRegistration = await db.webinarAttendee.findUnique({
       where: {
         webinarId_userId: {
@@ -151,7 +142,6 @@ export class WebinarService extends BaseService<Webinar> {
       });
     }
 
-    // Check if webinar has available slots
     const availableSlots =
       await this.webinarRepository.checkAvailableSlots(webinarId);
     if (availableSlots <= 0) {
@@ -161,7 +151,6 @@ export class WebinarService extends BaseService<Webinar> {
       });
     }
 
-    // Register user for webinar
     await db.webinarAttendee.create({
       data: {
         id: crypto.randomUUID(),
@@ -186,7 +175,6 @@ export class WebinarService extends BaseService<Webinar> {
       });
     }
 
-    // Cannot unregister from ongoing or completed webinars
     if (webinar.status === "ONGOING" || webinar.status === "COMPLETED") {
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -194,7 +182,6 @@ export class WebinarService extends BaseService<Webinar> {
       });
     }
 
-    // Delete registration
     const deleted = await db.webinarAttendee.deleteMany({
       where: {
         webinarId,
@@ -258,7 +245,6 @@ export class WebinarService extends BaseService<Webinar> {
       });
     }
 
-    // Check if mentor owns the webinar
     if (mentorId && webinar.mentorId !== mentorId) {
       throw new TRPCError({
         code: "FORBIDDEN",
@@ -282,7 +268,6 @@ export class WebinarService extends BaseService<Webinar> {
       });
     }
 
-    // Check if mentor owns the webinar
     if (mentorId && webinar.mentorId !== mentorId) {
       throw new TRPCError({
         code: "FORBIDDEN",
@@ -290,7 +275,6 @@ export class WebinarService extends BaseService<Webinar> {
       });
     }
 
-    // Can only add recording for completed webinars
     if (webinar.status !== "COMPLETED") {
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -310,7 +294,6 @@ export class WebinarService extends BaseService<Webinar> {
       });
     }
 
-    // Check if user is registered
     const registration = await db.webinarAttendee.findUnique({
       where: {
         webinarId_userId: {
@@ -327,7 +310,6 @@ export class WebinarService extends BaseService<Webinar> {
       });
     }
 
-    // Update join time
     await db.webinarAttendee.update({
       where: {
         webinarId_userId: {
