@@ -1,5 +1,4 @@
 import type { BetterAuthOptions } from "better-auth";
-import { expo } from "@better-auth/expo";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { oAuthProxy } from "better-auth/plugins";
@@ -8,11 +7,10 @@ import { db } from "@acme/db/client";
 
 export function initAuth(options: {
   baseUrl: string;
-  productionUrl: string;
   secret: string | undefined;
 
-  discordClientId: string;
-  discordClientSecret: string;
+  googleClientId: string;
+  googleClientSecret: string;
 }) {
   const config = {
     database: drizzleAdapter(db, {
@@ -26,18 +24,15 @@ export function initAuth(options: {
          * Auto-inference blocked by https://github.com/better-auth/better-auth/pull/2891
          */
         currentURL: options.baseUrl,
-        productionURL: options.productionUrl,
       }),
-      expo(),
     ],
     socialProviders: {
-      discord: {
-        clientId: options.discordClientId,
-        clientSecret: options.discordClientSecret,
-        redirectURI: `${options.productionUrl}/api/auth/callback/discord`,
+      google: {
+        clientId: options.googleClientId,
+        clientSecret: options.googleClientSecret,
       },
     },
-    trustedOrigins: ["expo://"],
+    trustedOrigins: ["expo://", "http://localhost:3000"],
   } satisfies BetterAuthOptions;
 
   return betterAuth(config);
