@@ -1,9 +1,11 @@
 import type { BetterAuthOptions } from "better-auth";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { oAuthProxy } from "better-auth/plugins";
+import { customSession, oAuthProxy } from "better-auth/plugins";
 
 import { db } from "@acme/db/client";
+
+import { fetchUserRole } from "./fetchUserRole";
 
 export function initAuth(options: {
   baseUrl: string;
@@ -24,6 +26,17 @@ export function initAuth(options: {
          * Auto-inference blocked by https://github.com/better-auth/better-auth/pull/2891
          */
         currentURL: options.baseUrl,
+      }),
+      customSession(async ({ user, session }) => {
+        const role = await fetchUserRole(user.id);
+        return {
+          user: {
+            ...user,
+            role,
+          },
+
+          session,
+        };
       }),
     ],
     socialProviders: {

@@ -8,6 +8,10 @@ import { auth, getSession } from "~/auth/server";
 export async function AuthShowcase() {
   const session = await getSession();
 
+  if (session?.user.role === "user") {
+    redirect("/join");
+  }
+
   if (!session) {
     return (
       <form>
@@ -37,6 +41,7 @@ export async function AuthShowcase() {
     <div className="flex flex-col items-center justify-center gap-4">
       <p className="text-center text-2xl">
         <span>Logged in as {session.user.name}</span>
+        <span>Logged in as {session.user.role}</span>
       </p>
 
       <form>

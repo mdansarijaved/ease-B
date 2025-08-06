@@ -1,21 +1,30 @@
 import { pgTable } from "drizzle-orm/pg-core";
 
+import { timestamps } from "./column.helper";
+
 export const user = pgTable("user", (t) => ({
   id: t.text().primaryKey(),
   name: t.text().notNull(),
   email: t.text().notNull().unique(),
   emailVerified: t.boolean().notNull(),
+  role: t
+    .text({ enum: ["admin", "user", "mentor", "superadmin", "student"] })
+    .default("user"),
+  phone: t.text(),
+  address: t.text(),
+  city: t.text(),
+  state: t.text(),
+  zip: t.text(),
+  country: t.text(),
   image: t.text(),
-  createdAt: t.timestamp().notNull(),
-  updatedAt: t.timestamp().notNull(),
+  ...timestamps,
 }));
 
 export const session = pgTable("session", (t) => ({
   id: t.text().primaryKey(),
   expiresAt: t.timestamp().notNull(),
   token: t.text().notNull().unique(),
-  createdAt: t.timestamp().notNull(),
-  updatedAt: t.timestamp().notNull(),
+  ...timestamps,
   ipAddress: t.text(),
   userAgent: t.text(),
   userId: t
@@ -39,8 +48,7 @@ export const account = pgTable("account", (t) => ({
   refreshTokenExpiresAt: t.timestamp(),
   scope: t.text(),
   password: t.text(),
-  createdAt: t.timestamp().notNull(),
-  updatedAt: t.timestamp().notNull(),
+  ...timestamps,
 }));
 
 export const verification = pgTable("verification", (t) => ({
@@ -48,6 +56,5 @@ export const verification = pgTable("verification", (t) => ({
   identifier: t.text().notNull(),
   value: t.text().notNull(),
   expiresAt: t.timestamp().notNull(),
-  createdAt: t.timestamp(),
-  updatedAt: t.timestamp(),
+  ...timestamps,
 }));
