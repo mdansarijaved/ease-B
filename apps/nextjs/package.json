@@ -24,6 +24,8 @@
     "@trpc/client": "catalog:",
     "@trpc/server": "catalog:",
     "@trpc/tanstack-react-query": "catalog:",
+    "lucide-react": "^0.537.0",
+    "motion": "^12.23.12",
     "next": "^15.3.3",
     "react": "catalog:react19",
     "react-dom": "catalog:react19",
