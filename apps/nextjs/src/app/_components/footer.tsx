@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Apple, Github, Linkedin, Play, Twitter } from "lucide-react";
+import { Github, Linkedin, Twitter } from "lucide-react";
 import { motion } from "motion/react";
 
 import { cn } from "@acme/ui";
@@ -45,9 +45,7 @@ export default function Footer({ className }: FooterProps) {
       >
         <div className="grid gap-8 py-10 md:grid-cols-12">
           <div className="md:col-span-4">
-            <div className="text-lg font-semibold text-foreground">
-              EasyWeasy
-            </div>
+            <div className="text-2xl font-bold text-primary">EasyWeasy</div>
             <p className="mt-2 text-sm text-muted-foreground">
               Built for teams of today, like yours. Learn, mentor, and grow in
               one place.
@@ -57,17 +55,17 @@ export default function Footer({ className }: FooterProps) {
               <a
                 aria-label="Twitter"
                 href="#"
-                className="hover:text-foreground"
+                className="hover:text-primary/80"
               >
                 <Twitter className="h-4 w-4" />
               </a>
-              <a aria-label="GitHub" href="#" className="hover:text-foreground">
+              <a aria-label="GitHub" href="#" className="hover:text-primary/80">
                 <Github className="h-4 w-4" />
               </a>
               <a
                 aria-label="LinkedIn"
                 href="#"
-                className="hover:text-foreground"
+                className="hover:text-primary/80"
               >
                 <Linkedin className="h-4 w-4" />
               </a>
@@ -171,36 +169,16 @@ function FooterCol(props: { title: string; items: string[] }) {
       <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
         {props.items.map((item) => (
           <li key={item}>
-            <a href="#" className="transition-colors hover:text-foreground">
+            <a
+              href="#"
+              className="transition-all duration-300 hover:text-primary/80"
+            >
               {item}
             </a>
           </li>
         ))}
       </ul>
     </div>
-  );
-}
-
-function StoreBadge({ kind }: { kind: "apple" | "google" }) {
-  if (kind === "apple") {
-    return (
-      <a
-        href="#"
-        className="inline-flex items-center gap-2 rounded-md border border-primary/30 bg-primary/10 px-3 py-2 text-xs font-medium text-primary hover:bg-primary/15"
-      >
-        <Apple className="h-4 w-4" />
-        App Store
-      </a>
-    );
-  }
-  return (
-    <a
-      href="#"
-      className="inline-flex items-center gap-2 rounded-md border border-primary/30 bg-primary/10 px-3 py-2 text-xs font-medium text-primary hover:bg-primary/15"
-    >
-      <Play className="h-4 w-4" />
-      Google Play
-    </a>
   );
 }
 
@@ -214,5 +192,3 @@ function BlogCard(props: { title: string; desc: string }) {
     </a>
   );
 }
-
-// Ripple effect intentionally removed

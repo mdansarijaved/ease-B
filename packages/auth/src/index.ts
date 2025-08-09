@@ -1,7 +1,7 @@
 import type { BetterAuthOptions } from "better-auth";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { customSession, oAuthProxy } from "better-auth/plugins";
+import { customSession } from "better-auth/plugins";
 
 import { db } from "@acme/db/client";
 
@@ -20,13 +20,15 @@ export function initAuth(options: {
     }),
     baseURL: options.baseUrl,
     secret: options.secret,
+
+    socialProviders: {
+      google: {
+        clientId: options.googleClientId,
+        clientSecret: options.googleClientSecret,
+      },
+    },
+    trustedOrigins: ["expo://", "http://localhost:3000"],
     plugins: [
-      oAuthProxy({
-        /**
-         * Auto-inference blocked by https://github.com/better-auth/better-auth/pull/2891
-         */
-        currentURL: options.baseUrl,
-      }),
       customSession(async ({ user, session }) => {
         const role = await fetchUserRole(user.id);
         return {
@@ -39,13 +41,6 @@ export function initAuth(options: {
         };
       }),
     ],
-    socialProviders: {
-      google: {
-        clientId: options.googleClientId,
-        clientSecret: options.googleClientSecret,
-      },
-    },
-    trustedOrigins: ["expo://", "http://localhost:3000"],
   } satisfies BetterAuthOptions;
 
   return betterAuth(config);

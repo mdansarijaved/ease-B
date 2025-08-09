@@ -11,6 +11,7 @@ import "~/app/globals.css";
 
 import Footer from "~/app/_components/footer";
 import { env } from "~/env";
+import Header from "./_components/header";
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -61,6 +62,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <TRPCReactProvider>
+            <Header />
             {props.children}
             <Footer />
           </TRPCReactProvider>

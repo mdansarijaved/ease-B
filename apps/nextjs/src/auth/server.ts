@@ -12,8 +12,8 @@ const baseUrl = "http://localhost:3000";
 export const auth = initAuth({
   baseUrl,
   secret: env.AUTH_SECRET,
-  googleClientId: env.AUTH_GOOGLE_ID as string,
-  googleClientSecret: env.AUTH_GOOGLE_SECRET as string,
+  googleClientId: env.AUTH_GOOGLE_ID,
+  googleClientSecret: env.AUTH_GOOGLE_SECRET,
 });
 
 export const getSession = cache(async () =>

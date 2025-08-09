@@ -154,13 +154,11 @@ function JoinPage() {
   const goBack = () => setCurrent((s) => Math.max(s - 1, 0));
 
   const onSubmit = (values: FormValues) => {
-    // TODO: Hook this to your backend
-    // For now just log
     console.log("Join submission", values);
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-b from-white to-secondary/40">
+    <div className="grid h-full place-items-center">
       <div className="container mx-auto max-w-6xl px-6 py-10">
         <motion.div
           initial={{ opacity: 0, y: -8 }}
@@ -178,7 +176,7 @@ function JoinPage() {
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           <div className="md:col-span-2">
-            <div className="flex flex-col rounded-2xl border bg-card p-6 shadow-sm">
+            <div className="flex flex-col rounded border bg-card p-6 shadow-sm">
               <header className="mb-6">
                 {(() => {
                   const step: Step = steps[current] ?? {
@@ -328,7 +326,7 @@ function InfoAside() {
       transition={{ duration: 0.3 }}
       className="flex flex-col gap-4 md:sticky md:top-6"
     >
-      <div className="rounded-2xl border bg-card p-4">
+      <div className="rounded border bg-card p-4">
         <div className="mb-2 text-sm font-medium">Why join?</div>
         <ul className="space-y-2 text-sm text-muted-foreground">
           <li className="flex items-start gap-2">
@@ -345,24 +343,24 @@ function InfoAside() {
           </li>
         </ul>
       </div>
-      <div className="rounded-2xl border bg-card p-4">
+      <div className="rounded border bg-card p-4">
         <div className="mb-1 text-sm font-medium">Quick facts</div>
         <div className="grid grid-cols-3 gap-2 text-center text-xs">
-          <div className="rounded-lg border p-2">
+          <div className="rounded border p-2">
             <div className="font-semibold">3 min</div>
             <div className="mt-0.5 text-muted-foreground">to complete</div>
           </div>
-          <div className="rounded-lg border p-2">
+          <div className="rounded border p-2">
             <div className="font-semibold">Free</div>
             <div className="mt-0.5 text-muted-foreground">to join</div>
           </div>
-          <div className="rounded-lg border p-2">
+          <div className="rounded border p-2">
             <div className="font-semibold">100%</div>
             <div className="mt-0.5 text-muted-foreground">control</div>
           </div>
         </div>
       </div>
-      <div className="rounded-2xl border bg-card p-4">
+      <div className="rounded border bg-card p-4">
         <div className="text-sm font-medium">Need help?</div>
         <p className="mt-1 text-xs text-muted-foreground">
           You can always change your details later from your profile settings.
@@ -394,7 +392,7 @@ function RoleStep() {
         })
       }
       className={cn(
-        "group w-full rounded-xl border p-4 text-left transition-all hover:shadow-sm",
+        "group w-full rounded border p-4 text-left transition-all hover:shadow-sm",
         currentRole === value
           ? "border-primary ring-2 ring-primary/30"
           : "border-input",
@@ -487,7 +485,7 @@ function ProfessionStep() {
                     })
                   }
                   className={cn(
-                    "flex items-center gap-3 rounded-xl border p-3 text-left transition-all hover:shadow-sm",
+                    "flex items-center gap-3 rounded border p-3 text-left transition-all hover:shadow-sm",
                     profession === opt.label
                       ? "border-primary ring-2 ring-primary/30"
                       : "border-input",
@@ -704,7 +702,7 @@ function ExperienceStep() {
         )}
 
         {fields.map((field, idx) => (
-          <div key={field.id} className="rounded-lg border p-4">
+          <div key={field.id} className="rounded border p-4">
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <FormField
                 control={form.control}

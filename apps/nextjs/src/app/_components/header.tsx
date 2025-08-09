@@ -8,8 +8,13 @@ import { AnimatePresence, motion } from "motion/react";
 
 import { Button } from "@acme/ui/button";
 
+import { authClient } from "~/auth/client";
+
 function Header() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const user = authClient.useSession();
+  const isLoggedIn = !!user.data?.user;
+  const isNormalUser = user.data?.user.role === "user";
 
   const features = [
     {
@@ -77,12 +82,24 @@ function Header() {
               </Link>
             </div>
             <div className="flex items-center gap-2">
-              <Button>
-                <Link href="/login">Login</Link>
-              </Button>
-              <Button variant="outline">
-                <Link href="/signup">Signup</Link>
-              </Button>
+              {isLoggedIn && !isNormalUser ? (
+                <Button>
+                  <Link href="/profile">Profile</Link>
+                </Button>
+              ) : isNormalUser ? (
+                <Button>
+                  <Link href="/join">Join Us</Link>
+                </Button>
+              ) : (
+                <>
+                  <Button variant="outline">
+                    <Link href="/login">Login</Link>
+                  </Button>
+                  <Button variant="outline">
+                    <Link href="/signup">Signup</Link>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
           <AnimatePresence>
