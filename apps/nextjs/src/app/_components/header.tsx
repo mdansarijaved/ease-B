@@ -49,11 +49,11 @@ function Header() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="relative bg-white text-neutral-700 shadow-sm"
+      className="relative text-neutral-700 shadow-sm"
     >
-      <div className="mx-auto">
+      <nav className="mx-auto">
         <div className="relative">
-          <div className="container flex h-16 items-center justify-between px-6">
+          <div className="container grid h-16 grid-cols-3 items-center justify-between px-6">
             <div className="flex items-center gap-2">
               <div
                 className="relative"
@@ -74,14 +74,12 @@ function Header() {
                 About
               </Link>
             </div>
-            <div>
+            <div className="text-center">
               <Link href="/">
-                <h1 className="text-2xl font-bold text-neutral-700">
-                  EasyWeasy
-                </h1>
+                <h1 className="text-2xl font-bold text-neutral-700">Butter.</h1>
               </Link>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-end gap-2">
               {isLoggedIn && !isNormalUser ? (
                 <Button>
                   <Link href="/profile">Profile</Link>
@@ -151,7 +149,7 @@ function Header() {
             )}
           </AnimatePresence>
         </div>
-      </div>
+      </nav>
     </motion.div>
   );
 }

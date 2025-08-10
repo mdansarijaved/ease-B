@@ -8,9 +8,9 @@ import { auth, getSession } from "~/auth/server";
 export async function AuthShowcase() {
   const session = await getSession();
 
-  if (session?.user.role === "user") {
-    redirect("/join");
-  }
+  // if (session?.user.role === "user") {
+  //   redirect("/join");
+  // }
 
   if (!session) {
     return (

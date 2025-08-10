@@ -32,7 +32,7 @@ export default function Footer({ className }: FooterProps) {
   return (
     <footer
       className={cn(
-        "relative mt-16 w-full overflow-hidden border-t border-primary/20 [--tw-border-opacity:0.2]",
+        "relative w-full overflow-hidden bg-primary-foreground",
         className,
       )}
       aria-label="Site footer"
@@ -45,7 +45,7 @@ export default function Footer({ className }: FooterProps) {
       >
         <div className="grid gap-8 py-10 md:grid-cols-12">
           <div className="md:col-span-4">
-            <div className="text-2xl font-bold text-primary">EasyWeasy</div>
+            <div className="text-2xl font-bold text-primary">Butter.</div>
             <p className="mt-2 text-sm text-muted-foreground">
               Built for teams of today, like yours. Learn, mentor, and grow in
               one place.
@@ -139,8 +139,7 @@ export default function Footer({ className }: FooterProps) {
         <div className="mt-6 border-t py-6 text-xs text-muted-foreground">
           <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
             <div>
-              © {new Date().getFullYear()} EasyWeasy. Built with love from
-              India.
+              © {new Date().getFullYear()} Butter.. Built with love from India.
             </div>
             <div className="flex gap-3">
               <a href="#" className="hover:text-foreground">
