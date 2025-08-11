@@ -1,24 +1,30 @@
-import { pgTable } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import { index, pgTable } from "drizzle-orm/pg-core";
 
 import { timestamps } from "./column.helper";
+import { mentorTable } from "./mentor-schema";
 
-export const user = pgTable("user", (t) => ({
-  id: t.text().primaryKey(),
-  name: t.text().notNull(),
-  email: t.text().notNull().unique(),
-  emailVerified: t.boolean().notNull(),
-  role: t
-    .text({ enum: ["admin", "user", "mentor", "superadmin", "student"] })
-    .default("user"),
-  phone: t.text(),
-  address: t.text(),
-  city: t.text(),
-  state: t.text(),
-  zip: t.text(),
-  country: t.text(),
-  image: t.text(),
-  ...timestamps,
-}));
+export const user = pgTable(
+  "user",
+  (t) => ({
+    id: t.text().primaryKey(),
+    name: t.text().notNull(),
+    email: t.text().notNull().unique(),
+    emailVerified: t.boolean().notNull(),
+    role: t
+      .text({ enum: ["admin", "user", "mentor", "superadmin", "student"] })
+      .default("user"),
+    phone: t.text(),
+    address: t.text(),
+    city: t.text(),
+    state: t.text(),
+    zip: t.text(),
+    country: t.text(),
+    image: t.text(),
+    ...timestamps,
+  }),
+  (t) => [index("email_index").on(t.email), index("role_index").on(t.role)],
+);
 
 export const session = pgTable("session", (t) => ({
   id: t.text().primaryKey(),
@@ -57,4 +63,8 @@ export const verification = pgTable("verification", (t) => ({
   value: t.text().notNull(),
   expiresAt: t.timestamp().notNull(),
   ...timestamps,
+}));
+
+export const userRelations = relations(user, ({ one }) => ({
+  mentor: one(mentorTable),
 }));

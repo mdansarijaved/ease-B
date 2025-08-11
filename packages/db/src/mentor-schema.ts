@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import { pgEnum, pgTable } from "drizzle-orm/pg-core";
 
 import { user } from "./auth-schema";
@@ -28,8 +29,8 @@ export const webinarStatusEnum = pgEnum("webinar_status", [
   "CANCELLED",
 ]);
 
-export const mentor = pgTable("mentor", (t) => ({
-  id: t.text().primaryKey(),
+export const mentorTable = pgTable("mentor", (t) => ({
+  id: t.uuid("id").primaryKey().defaultRandom(),
   userId: t.text().references(() => user.id),
   about: t.text(),
   skills: t.text().array(),
@@ -40,3 +41,12 @@ export const mentor = pgTable("mentor", (t) => ({
   availability: t.text(),
   ...timestamps,
 }));
+
+export const userMentorRelation = relations(mentorTable, ({ one }) => {
+  return {
+    user: one(user, {
+      fields: [mentorTable.id],
+      references: [user.id],
+    }),
+  };
+});

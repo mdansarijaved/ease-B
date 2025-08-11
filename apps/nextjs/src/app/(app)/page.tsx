@@ -19,7 +19,14 @@ export default function HomePage() {
         </div>
 
         <div className="container relative mt-20 grid h-full place-items-center">
-          <div className="flex h-full w-full flex-col justify-center gap-4 text-center">
+          {/* <Image
+            src={"/Home.png"}
+            height={500}
+            width={500}
+            alt="Home"
+            className="absolute inset-0 z-0 size-[500px]"
+          /> */}
+          <div className="z-10 flex h-full w-full flex-col justify-center gap-4 text-center">
             <div className="flex items-center justify-center gap-2">
               <Badge variant="transparent">
                 <p>
