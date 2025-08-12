@@ -35,10 +35,44 @@ export const mentorTable = pgTable("mentor", (t) => ({
   about: t.text(),
   skills: t.text().array(),
   experience: t.text(),
-  education: t.text(),
+  education: t
+    .jsonb()
+    .$type<
+      {
+        degree: string;
+        institution: string;
+        year: number;
+        active: boolean;
+      }[]
+    >()
+    .notNull(),
   certifications: t.text().array(),
   languages: t.text().array(),
-  availability: t.text(),
+  ...timestamps,
+}));
+
+export const mentorAvailabilityTable = pgTable("mentor_availability", (t) => ({
+  id: t.uuid("id").primaryKey().defaultRandom(),
+  mentorId: t.uuid("mentor_id").references(() => mentorTable.id),
+  dayOfWeek: dayOfWeekEnum("day_of_week").notNull(),
+  timeslots: t
+    .jsonb()
+    .$type<
+      {
+        startTime: string;
+        endTime: string;
+      }[]
+    >()
+    .notNull(),
+  ...timestamps,
+}));
+
+export const webinarTable = pgTable("webinar", (t) => ({
+  id: t.uuid("id").primaryKey().defaultRandom(),
+  mentorId: t.uuid("mentor_id").references(() => mentorTable.id),
+  title: t.text("title").notNull(),
+  description: t.text("description").notNull(),
+  date: t.date("date").notNull(),
   ...timestamps,
 }));
 
