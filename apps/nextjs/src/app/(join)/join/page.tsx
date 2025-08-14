@@ -4,10 +4,8 @@ import type { FieldPath } from "react-hook-form";
 import React, { useMemo, useState } from "react";
 import {
   Briefcase,
-  ClipboardList,
   Database,
   GraduationCap,
-  MoreHorizontal,
   PenTool,
   UserCog,
 } from "lucide-react";
@@ -29,71 +27,49 @@ import {
   useForm,
 } from "@acme/ui/form";
 import { Input } from "@acme/ui/input";
+import { Label } from "@acme/ui/label";
 
 type Role = "student" | "mentor";
 interface Step {
-  key: "role" | "profession" | "skills" | "education" | "experience";
+  key: "role" | "about" | "skills" | "education" | "experience";
   title: string;
   description: string;
 }
 
-const educationSchema = z.object({
+const educationItemSchema = z.object({
   degree: z.string().min(2, "Degree is required"),
   institution: z.string().min(2, "Institution is required"),
-  graduationYear: z
+  year: z
     .string()
     .min(4, "Year is required")
     .regex(/^\d{4}$/g, "Enter a valid year"),
+  active: z.boolean(),
 });
 
-const experienceItemSchema = z.object({
-  company: z.string().min(2, "Company is required"),
-  role: z.string().min(2, "Role is required"),
-  startYear: z
-    .string()
-    .min(4, "Start year is required")
-    .regex(/^\d{4}$/g, "Enter a valid year"),
-  endYear: z
-    .string()
-    .min(4, "End year is required")
-    .regex(/^\d{4}$/g, "Enter a valid year"),
-});
+const experienceTextSchema = z
+  .string()
+  .max(10000, "Too long")
+  .optional()
+  .or(z.literal(""));
 
-const formSchema = z
-  .object({
-    role: z.enum(["student", "mentor"], "Please select a role"),
-    profession: z.string().min(2, "Please select your profession"),
-    professionOther: z.string().optional(),
-    skills: z
-      .array(z.string().min(1))
-      .min(1, "Add at least one skill")
-      .max(20, "Too many skills"),
-    education: educationSchema,
-    achievements: z.string().max(1000).optional().or(z.literal("")),
-    experience: z.array(experienceItemSchema).min(0).max(10),
-  })
-  .superRefine((val, ctx) => {
-    if (
-      val.profession === "Other" &&
-      (!val.professionOther || val.professionOther.trim().length < 2)
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["professionOther"],
-        message: "Please specify your profession",
-      });
-    }
-  });
+const formSchema = z.object({
+  role: z.enum(["student", "mentor"], "Please select a role"),
+  about: z.string().max(2000).optional().or(z.literal("")),
+  skills: z
+    .array(z.string().min(1))
+    .min(1, "Add at least one skill")
+    .max(20, "Too many skills"),
+  education: z.array(educationItemSchema).min(0).max(10),
+  experience: experienceTextSchema,
+  languages: z.array(z.string().min(1)).min(0).max(20),
+  certifications: z.array(z.string().min(1)).min(0).max(20),
+});
 
 type FormValues = z.infer<typeof formSchema>;
 
 const steps: Step[] = [
   { key: "role", title: "Who are you?", description: "Choose your role" },
-  {
-    key: "profession",
-    title: "Your profession",
-    description: "Select what best describes you",
-  },
+  { key: "about", title: "About you", description: "Tell us about yourself" },
   {
     key: "skills",
     title: "Your skills",
@@ -101,13 +77,13 @@ const steps: Step[] = [
   },
   {
     key: "education",
-    title: "Education & achievements",
+    title: "Education",
     description: "Your academic journey",
   },
   {
     key: "experience",
     title: "Experience",
-    description: "Work history or projects",
+    description: "Summary of your experience",
   },
 ];
 
@@ -116,12 +92,12 @@ function JoinPage() {
     schema: formSchema,
     defaultValues: {
       role: undefined as unknown as Role,
-      profession: "",
-      professionOther: "",
+      about: "",
       skills: [],
-      education: { degree: "", institution: "", graduationYear: "" },
-      achievements: "",
-      experience: [],
+      education: [],
+      experience: "",
+      languages: [],
+      certifications: [],
     },
     mode: "onChange",
   });
@@ -130,14 +106,9 @@ function JoinPage() {
 
   const stepFields: FieldPath<FormValues>[][] = [
     ["role"],
-    ["profession", "professionOther"],
+    ["about"],
     ["skills"],
-    [
-      "education.degree",
-      "education.institution",
-      "education.graduationYear",
-      "achievements",
-    ],
+    ["education"],
     ["experience"],
   ];
 
@@ -223,7 +194,7 @@ function JoinPage() {
                       transition={{ duration: 0.2 }}
                     >
                       {current === 0 && <RoleStep />}
-                      {current === 1 && <ProfessionStep />}
+                      {current === 1 && <AboutStep />}
                       {current === 2 && <SkillsStep />}
                       {current === 3 && <EducationStep />}
                       {current === 4 && <ExperienceStep />}
@@ -263,9 +234,9 @@ function Stepper(props: { current: number }) {
   const items: { key: Step["key"]; label: string; icon: React.ReactNode }[] = [
     { key: "role", label: "Role", icon: <UserCog className="h-3.5 w-3.5" /> },
     {
-      key: "profession",
-      label: "Profession",
-      icon: <Briefcase className="h-3.5 w-3.5" />,
+      key: "about",
+      label: "About",
+      icon: <UserCog className="h-3.5 w-3.5" />,
     },
     {
       key: "skills",
@@ -280,7 +251,7 @@ function Stepper(props: { current: number }) {
     {
       key: "experience",
       label: "Experience",
-      icon: <ClipboardList className="h-3.5 w-3.5" />,
+      icon: <Briefcase className="h-3.5 w-3.5" />,
     },
   ];
   return (
@@ -453,77 +424,16 @@ function RoleStep() {
   );
 }
 
-function ProfessionStep() {
-  const form = useFormContext<FormValues>();
-  const profession = form.watch("profession");
-  const options = [
-    { label: "Software Engineer", icon: <PenTool className="h-5 w-5" /> },
-    { label: "Data Scientist", icon: <Database className="h-5 w-5" /> },
-    { label: "Product Manager", icon: <ClipboardList className="h-5 w-5" /> },
-    { label: "Designer", icon: <PenTool className="h-5 w-5" /> },
-    { label: "Other", icon: <MoreHorizontal className="h-5 w-5" /> },
-  ];
-
-  return (
-    <div className="space-y-5">
-      <FormField
-        control={form.control}
-        name="profession"
-        render={() => (
-          <FormItem>
-            <FormLabel>Select your profession</FormLabel>
-            <FormDescription>Pick the closest match.</FormDescription>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              {options.map((opt) => (
-                <button
-                  key={opt.label}
-                  type="button"
-                  onClick={() =>
-                    form.setValue("profession", opt.label, {
-                      shouldValidate: true,
-                      shouldDirty: true,
-                    })
-                  }
-                  className={cn(
-                    "flex items-center gap-3 rounded border p-3 text-left transition-all hover:shadow-sm",
-                    profession === opt.label
-                      ? "border-primary ring-2 ring-primary/30"
-                      : "border-input",
-                  )}
-                >
-                  <span className="text-primary">{opt.icon}</span>
-                  <span className="text-sm font-medium">{opt.label}</span>
-                </button>
-              ))}
-            </div>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      {profession === "Other" && (
-        <FormField
-          control={form.control}
-          name="professionOther"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Specify your profession</FormLabel>
-              <FormControl>
-                <Input placeholder="e.g. Researcher, Entrepreneur" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      )}
-    </div>
-  );
-}
+// removed obsolete ProfessionStep tied to old schema
 
 function SkillsStep() {
   const form = useFormContext<FormValues>();
   const [skillInput, setSkillInput] = useState("");
+  const [languageInput, setLanguageInput] = useState("");
+  const [certInput, setCertInput] = useState("");
   const skills = form.watch("skills");
+  const languages = form.watch("languages");
+  const certifications = form.watch("certifications");
 
   const addSkill = () => {
     const s = skillInput.trim();
@@ -540,6 +450,44 @@ function SkillsStep() {
     form.setValue(
       "skills",
       skills.filter((x) => x !== s),
+      { shouldValidate: true, shouldDirty: true },
+    );
+  };
+
+  const addLanguage = () => {
+    const s = languageInput.trim();
+    if (!s) return;
+    if (languages.includes(s)) return;
+    form.setValue("languages", [...languages, s], {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+    setLanguageInput("");
+  };
+
+  const removeLanguage = (s: string) => {
+    form.setValue(
+      "languages",
+      languages.filter((x) => x !== s),
+      { shouldValidate: true, shouldDirty: true },
+    );
+  };
+
+  const addCertification = () => {
+    const s = certInput.trim();
+    if (!s) return;
+    if (certifications.includes(s)) return;
+    form.setValue("certifications", [...certifications, s], {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+    setCertInput("");
+  };
+
+  const removeCertification = (s: string) => {
+    form.setValue(
+      "certifications",
+      certifications.filter((x) => x !== s),
       { shouldValidate: true, shouldDirty: true },
     );
   };
@@ -571,7 +519,7 @@ function SkillsStep() {
                 Add
               </Button>
             </div>
-            {skills.length > 0 && (
+            {skills && skills.length > 0 && (
               <div className="mt-3 flex flex-wrap gap-2">
                 {skills.map((s) => (
                   <span
@@ -595,99 +543,111 @@ function SkillsStep() {
           </FormItem>
         )}
       />
+
+      <div className="mt-6 space-y-2">
+        <Label>Languages</Label>
+        <div className="flex gap-2">
+          <Input
+            placeholder="e.g. English, Hindi"
+            value={languageInput}
+            onChange={(e) => setLanguageInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                addLanguage();
+              }
+            }}
+          />
+          <Button type="button" onClick={addLanguage}>
+            Add
+          </Button>
+        </div>
+        {languages && languages.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-2">
+            {languages.map((s) => (
+              <span
+                key={s}
+                className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm text-primary"
+              >
+                {s}
+                <button
+                  type="button"
+                  onClick={() => removeLanguage(s)}
+                  className="text-primary/70 hover:text-primary"
+                  aria-label={`Remove ${s}`}
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="mt-6 space-y-2">
+        <Label>Certifications</Label>
+        <div className="flex gap-2">
+          <Input
+            placeholder="e.g. AWS Certified Solutions Architect"
+            value={certInput}
+            onChange={(e) => setCertInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                addCertification();
+              }
+            }}
+          />
+          <Button type="button" onClick={addCertification}>
+            Add
+          </Button>
+        </div>
+        {certifications && certifications.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-2">
+            {certifications.map((s) => (
+              <span
+                key={s}
+                className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm text-primary"
+              >
+                {s}
+                <button
+                  type="button"
+                  onClick={() => removeCertification(s)}
+                  className="text-primary/70 hover:text-primary"
+                  aria-label={`Remove ${s}`}
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
 function EducationStep() {
   const form = useFormContext<FormValues>();
-  return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-      <FormField
-        control={form.control}
-        name="education.degree"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Degree</FormLabel>
-            <FormControl>
-              <Input placeholder="e.g. B.Sc Computer Science" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={form.control}
-        name="education.institution"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Institution</FormLabel>
-            <FormControl>
-              <Input placeholder="e.g. Stanford University" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={form.control}
-        name="education.graduationYear"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Graduation year</FormLabel>
-            <FormControl>
-              <Input inputMode="numeric" placeholder="e.g. 2025" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={form.control}
-        name="achievements"
-        render={({ field }) => (
-          <FormItem className="sm:col-span-2">
-            <FormLabel>Academic achievements</FormLabel>
-            <FormDescription>
-              Scholarships, awards, publications, etc.
-            </FormDescription>
-            <FormControl>
-              <textarea
-                rows={4}
-                placeholder="Tell us about your notable achievements"
-                className="min-h-[120px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                {...field}
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-    </div>
-  );
-}
-
-function ExperienceStep() {
-  const form = useFormContext<FormValues>();
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: "experience",
+    name: "education",
   });
 
   return (
     <div>
       <div className="mb-3 flex items-center justify-between">
         <div>
-          <div className="text-sm font-medium">Add experience</div>
+          <div className="text-sm font-medium">Add education</div>
           <div className="text-xs text-muted-foreground">
-            Internships, jobs, or significant projects
+            Degrees, diplomas, or certifications
           </div>
         </div>
         <Button
           type="button"
           variant="outline"
           onClick={() =>
-            append({ company: "", role: "", startYear: "", endYear: "" })
+            append({ degree: "", institution: "", year: "", active: true })
           }
         >
           Add item
@@ -697,7 +657,7 @@ function ExperienceStep() {
       <div className="space-y-4">
         {fields.length === 0 && (
           <div className="rounded-md border border-dashed p-4 text-sm text-muted-foreground">
-            No experience added yet.
+            No education added yet.
           </div>
         )}
 
@@ -706,40 +666,13 @@ function ExperienceStep() {
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <FormField
                 control={form.control}
-                name={`experience.${idx}.company` as const}
+                name={`education.${idx}.degree` as const}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Company</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g. Acme Inc." {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name={`experience.${idx}.role` as const}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Role</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g. Frontend Developer" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name={`experience.${idx}.startYear` as const}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Start year</FormLabel>
+                    <FormLabel>Degree</FormLabel>
                     <FormControl>
                       <Input
-                        inputMode="numeric"
-                        placeholder="e.g. 2022"
+                        placeholder="e.g. B.Sc Computer Science"
                         {...field}
                       />
                     </FormControl>
@@ -749,15 +682,49 @@ function ExperienceStep() {
               />
               <FormField
                 control={form.control}
-                name={`experience.${idx}.endYear` as const}
+                name={`education.${idx}.institution` as const}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>End year</FormLabel>
+                    <FormLabel>Institution</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="e.g. Stanford University"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name={`education.${idx}.year` as const}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Year</FormLabel>
                     <FormControl>
                       <Input
                         inputMode="numeric"
-                        placeholder="e.g. 2024"
+                        placeholder="e.g. 2025"
                         {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name={`education.${idx}.active` as const}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Active</FormLabel>
+                    <FormControl>
+                      <input
+                        type="checkbox"
+                        className="size-4 rounded border"
+                        checked={!!field.value}
+                        onChange={(e) => field.onChange(e.target.checked)}
                       />
                     </FormControl>
                     <FormMessage />
@@ -773,6 +740,65 @@ function ExperienceStep() {
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+function ExperienceStep() {
+  const form = useFormContext<FormValues>();
+  return (
+    <div>
+      <FormField
+        control={form.control}
+        name="experience"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Experience summary</FormLabel>
+            <FormDescription>
+              Briefly describe your professional experience (roles, projects,
+              accomplishments)
+            </FormDescription>
+            <FormControl>
+              <textarea
+                rows={6}
+                placeholder="Share a concise summary of your experience..."
+                className="min-h-[140px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                {...field}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </div>
+  );
+}
+
+function AboutStep() {
+  const form = useFormContext<FormValues>();
+  return (
+    <div>
+      <FormField
+        control={form.control}
+        name="about"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>About</FormLabel>
+            <FormDescription>
+              A short bio about you and what you mentor in
+            </FormDescription>
+            <FormControl>
+              <textarea
+                rows={6}
+                placeholder="Tell us about yourself..."
+                className="min-h-[140px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                {...field}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
     </div>
   );
 }

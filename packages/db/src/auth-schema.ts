@@ -1,8 +1,6 @@
-import { relations } from "drizzle-orm";
 import { index, pgTable } from "drizzle-orm/pg-core";
 
 import { timestamps } from "./column.helper";
-import { mentorTable } from "./mentor-schema";
 
 export const user = pgTable(
   "user",
@@ -11,9 +9,8 @@ export const user = pgTable(
     name: t.text().notNull(),
     email: t.text().notNull().unique(),
     emailVerified: t.boolean().notNull(),
-    role: t
-      .text({ enum: ["admin", "user", "mentor", "superadmin", "student"] })
-      .default("user"),
+    isAdmin: t.boolean().notNull().default(false),
+    isSuperAdmin: t.boolean().notNull().default(false),
     phone: t.text(),
     address: t.text(),
     city: t.text(),
@@ -23,7 +20,7 @@ export const user = pgTable(
     image: t.text(),
     ...timestamps,
   }),
-  (t) => [index("email_index").on(t.email), index("role_index").on(t.role)],
+  (t) => [index("email_index").on(t.email)],
 );
 
 export const session = pgTable("session", (t) => ({
@@ -63,8 +60,4 @@ export const verification = pgTable("verification", (t) => ({
   value: t.text().notNull(),
   expiresAt: t.timestamp().notNull(),
   ...timestamps,
-}));
-
-export const userRelations = relations(user, ({ one }) => ({
-  mentor: one(mentorTable),
 }));
