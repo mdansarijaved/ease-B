@@ -10,16 +10,57 @@ export const userProfileTable = pgTable("user_profile", (t) => ({
     .text("user_id")
     .references(() => user.id, { onDelete: "cascade" })
     .unique(),
+
   bio: t.text("bio"),
   ...timestamps,
 }));
 
+export const userProfileRelations = relations(userProfileTable, ({ many }) => ({
+  userProfileToSkills: many(userProfileToSkills),
+  userEducation: many(userEducation),
+  userWorkHistory: many(userWorkHistory),
+}));
 export const skills = pgTable("skills", (t) => ({
   id: t.uuid("id").primaryKey().defaultRandom(),
   name: t.text("name").notNull().unique(),
   description: t.text("description"),
   ...timestamps,
 }));
+
+export const skillsRelations = relations(skills, ({ many }) => ({
+  userProfileToSkills: many(userProfileToSkills),
+}));
+
+export const userProfileToSkills = pgTable(
+  "user_profile_to_skills",
+  (t) => ({
+    userProfileId: t
+      .uuid("user_profile_id")
+      .references(() => userProfileTable.id, { onDelete: "cascade" }),
+    skillId: t
+      .uuid("skill_id")
+      .references(() => skills.id, { onDelete: "cascade" }),
+    proficiencyLevel: t.text({
+      enum: ["beginner", "intermediate", "advanced", "expert"],
+    }),
+    ...timestamps,
+  }),
+  (t) => [primaryKey({ columns: [t.userProfileId, t.skillId] })],
+);
+
+export const userProfileToSkillsRelation = relations(
+  userProfileToSkills,
+  ({ one }) => ({
+    userProfile: one(userProfileTable, {
+      fields: [userProfileToSkills.userProfileId],
+      references: [userProfileTable.id],
+    }),
+    skill: one(skills, {
+      fields: [userProfileToSkills.skillId],
+      references: [skills.id],
+    }),
+  }),
+);
 
 export const userEducation = pgTable(
   "user_education",
@@ -39,6 +80,13 @@ export const userEducation = pgTable(
   (t) => [index("user_profile_education_index").on(t.userProfileId)],
 );
 
+export const userEducationRelation = relations(userEducation, ({ one }) => ({
+  userProfile: one(userProfileTable, {
+    fields: [userEducation.userProfileId],
+    references: [userProfileTable.id],
+  }),
+}));
+
 export const userWorkHistory = pgTable(
   "user_work_history",
   (t) => ({
@@ -56,49 +104,7 @@ export const userWorkHistory = pgTable(
   }),
   (t) => [index("user_profile_work_index").on(t.userProfileId)],
 );
-
-export const userProfileToSkills = pgTable(
-  "user_profile_to_skills",
-  (t) => ({
-    userProfileId: t
-      .uuid("user_profile_id")
-      .references(() => userProfileTable.id, { onDelete: "cascade" }),
-    skillId: t
-      .uuid("skill_id")
-      .references(() => skills.id, { onDelete: "cascade" }),
-    proficiencyLevel: t.text({
-      enum: ["beginner", "intermediate", "advanced", "expert"],
-    }),
-    ...timestamps,
-  }),
-  (t) => [primaryKey({ columns: [t.userProfileId, t.skillId] })],
-);
-
-export const userProfileRelations = relations(
-  userProfileTable,
-  ({ one, many }) => ({
-    user: one(user, {
-      fields: [userProfileTable.userId],
-      references: [user.id],
-    }),
-    skills: many(userProfileToSkills),
-    education: many(userEducation),
-    workHistory: many(userWorkHistory),
-  }),
-);
-
-export const skillsRelations = relations(skills, ({ many }) => ({
-  userProfiles: many(userProfileToSkills),
-}));
-
-export const userEducationRelations = relations(userEducation, ({ one }) => ({
-  userProfile: one(userProfileTable, {
-    fields: [userEducation.userProfileId],
-    references: [userProfileTable.id],
-  }),
-}));
-
-export const userWorkHistoryRelations = relations(
+export const userWorkHistoryRelation = relations(
   userWorkHistory,
   ({ one }) => ({
     userProfile: one(userProfileTable, {
@@ -107,24 +113,3 @@ export const userWorkHistoryRelations = relations(
     }),
   }),
 );
-
-export const userProfileToSkillsRelations = relations(
-  userProfileToSkills,
-  ({ one }) => ({
-    userProfile: one(userProfileTable, {
-      fields: [userProfileToSkills.userProfileId],
-      references: [userProfileTable.id],
-    }),
-    skill: one(skills, {
-      fields: [userProfileToSkills.skillId],
-      references: [skills.id],
-    }),
-  }),
-);
-
-export const userRelations = relations(user, ({ one }) => ({
-  profile: one(userProfileTable, {
-    fields: [user.id],
-    references: [userProfileTable.userId],
-  }),
-}));
