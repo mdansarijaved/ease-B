@@ -12,6 +12,7 @@ export const userProfileTable = pgTable("user_profile", (t) => ({
     .unique(),
 
   bio: t.text("bio"),
+
   ...timestamps,
 }));
 

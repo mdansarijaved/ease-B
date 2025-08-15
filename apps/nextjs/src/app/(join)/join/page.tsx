@@ -9,6 +9,7 @@ import { Button } from "@acme/ui/button";
 import { Form, useForm } from "@acme/ui/form";
 import { userProfileFormSchema } from "@acme/validators";
 
+import { authClient } from "~/auth/client";
 import AboutStep from "./_components/About";
 import BasicInformationForm from "./_components/BasicInformationForm";
 import EducationStep from "./_components/EducationFrom";
@@ -42,13 +43,19 @@ const steps: Step[] = [
 ];
 
 function JoinPage() {
-  const form = useForm({
-    schema: userProfileFormSchema,
-    defaultValues: {
+  const { data: session } = authClient.useSession();
+  console.log("session", session);
+
+  const [current, setCurrent] = useState(0);
+
+  const formValues = useMemo(
+    () => ({
       basicInformation: {
-        name: "",
-        image: "",
-        email: "",
+        name: session?.user.name ?? "",
+
+        image: session?.user.image ?? "",
+
+        email: session?.user.email ?? "",
         phone: "",
         country: "",
       },
@@ -57,11 +64,15 @@ function JoinPage() {
       education: [],
       experience: "",
       languages: [],
-    },
+    }),
+    [session],
+  );
+
+  const form = useForm({
+    schema: userProfileFormSchema,
+    values: formValues,
     mode: "onChange",
   });
-
-  const [current, setCurrent] = useState(0);
 
   const stepFields: FieldPath<userProfileFormSchemaType>[][] = [
     ["basicInformation"],

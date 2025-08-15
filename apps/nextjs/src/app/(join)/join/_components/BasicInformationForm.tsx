@@ -1,7 +1,7 @@
 import React from "react";
 import { useFormContext } from "react-hook-form";
 
-import type { BasicInformationFormSchemaType } from "@acme/validators";
+import type { userProfileFormSchemaType } from "@acme/validators";
 import {
   FormControl,
   FormField,
@@ -12,7 +12,7 @@ import {
 import { Input } from "@acme/ui/input";
 
 function BasicInformationForm() {
-  const form = useFormContext<BasicInformationFormSchemaType>();
+  const form = useFormContext<userProfileFormSchemaType>();
 
   return (
     <div>
@@ -20,7 +20,7 @@ function BasicInformationForm() {
 
       <FormField
         control={form.control}
-        name="name"
+        name="basicInformation.name"
         render={({ field }) => (
           <FormItem>
             <FormLabel>Name</FormLabel>
@@ -33,7 +33,7 @@ function BasicInformationForm() {
       />
       <FormField
         control={form.control}
-        name="image"
+        name="basicInformation.image"
         render={({ field }) => (
           <FormItem>
             <FormLabel>Image</FormLabel>
@@ -46,7 +46,7 @@ function BasicInformationForm() {
       />
       <FormField
         control={form.control}
-        name="email"
+        name="basicInformation.email"
         render={({ field }) => (
           <FormItem>
             <FormLabel>Email</FormLabel>
@@ -60,7 +60,7 @@ function BasicInformationForm() {
       <div className="grid grid-cols-2 gap-4">
         <FormField
           control={form.control}
-          name="phone"
+          name="basicInformation.phone"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Phone</FormLabel>
@@ -73,7 +73,7 @@ function BasicInformationForm() {
         />
         <FormField
           control={form.control}
-          name="country"
+          name="basicInformation.country"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Country</FormLabel>
