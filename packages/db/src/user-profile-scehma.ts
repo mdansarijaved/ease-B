@@ -36,9 +36,11 @@ export const userProfileToSkills = pgTable(
   (t) => ({
     userProfileId: t
       .uuid("user_profile_id")
+      .notNull()
       .references(() => userProfileTable.id, { onDelete: "cascade" }),
     skillId: t
       .uuid("skill_id")
+      .notNull()
       .references(() => skills.id, { onDelete: "cascade" }),
     proficiencyLevel: t.text({
       enum: ["beginner", "intermediate", "advanced", "expert"],

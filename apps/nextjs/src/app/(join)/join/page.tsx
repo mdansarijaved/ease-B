@@ -78,6 +78,7 @@ function JoinPage() {
 
   const goNext = async () => {
     const valid = await form.trigger(stepFields[current]);
+    console.log("valid", valid);
     if (valid) setCurrent((s) => Math.min(s + 1, steps.length - 1));
   };
 

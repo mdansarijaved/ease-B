@@ -31,9 +31,11 @@ export const mentorService = pgTable("mentor_service", (t) => ({
   id: t.uuid("id").primaryKey().defaultRandom(),
   mentorId: t
     .uuid("mentor_id")
+    .notNull()
     .references(() => mentorTable.id, { onDelete: "cascade" }),
   categoryId: t
     .uuid("category_id")
+    .notNull()
     .references(() => serviceCategory.id, { onDelete: "cascade" }),
   title: t.text("title").notNull(),
   description: t.text("description").notNull(),
@@ -61,6 +63,7 @@ export const mentorAvailability = pgTable(
     id: t.uuid("id").primaryKey().defaultRandom(),
     mentorId: t
       .uuid("mentor_id")
+      .notNull()
       .references(() => mentorTable.id, { onDelete: "cascade" }),
     dayOfWeek: t.integer("day_of_week").notNull(),
     startTime: t.time("start_time").notNull(),
@@ -80,9 +83,11 @@ export const mentorTimeSlot = pgTable(
     id: t.uuid("id").primaryKey().defaultRandom(),
     mentorId: t
       .uuid("mentor_id")
+      .notNull()
       .references(() => mentorTable.id, { onDelete: "cascade" }),
     serviceId: t
       .uuid("service_id")
+      .notNull()
       .references(() => mentorService.id, { onDelete: "cascade" }),
     startDateTime: t.timestamp("start_date_time").notNull(),
     endDateTime: t.timestamp("end_date_time").notNull(),
@@ -108,15 +113,19 @@ export const booking = pgTable(
     id: t.uuid("id").primaryKey().defaultRandom(),
     studentId: t
       .text("student_id")
+      .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
     mentorId: t
       .uuid("mentor_id")
+      .notNull()
       .references(() => mentorTable.id, { onDelete: "cascade" }),
     serviceId: t
       .uuid("service_id")
+      .notNull()
       .references(() => mentorService.id, { onDelete: "cascade" }),
     timeSlotId: t
       .uuid("time_slot_id")
+      .notNull()
       .references(() => mentorTimeSlot.id, { onDelete: "cascade" }),
     status: t
       .text({
@@ -163,6 +172,7 @@ export const mentorPayout = pgTable(
     id: t.uuid("id").primaryKey().defaultRandom(),
     mentorId: t
       .uuid("mentor_id")
+      .notNull()
       .references(() => mentorTable.id, { onDelete: "cascade" }),
     amount: t.numeric("amount", { precision: 10, scale: 2 }).notNull(),
     currency: t.text("currency").notNull().default("USD"),
@@ -194,12 +204,15 @@ export const mentorReview = pgTable(
     bookingId: t
       .uuid("booking_id")
       .references(() => booking.id, { onDelete: "cascade" })
-      .unique(),
+      .unique()
+      .notNull(),
     studentId: t
       .text("student_id")
-      .references(() => user.id, { onDelete: "cascade" }),
+      .references(() => user.id, { onDelete: "cascade" })
+      .notNull(),
     mentorId: t
       .uuid("mentor_id")
+      .notNull()
       .references(() => mentorTable.id, { onDelete: "cascade" }),
     rating: t.integer("rating").notNull(),
     comment: t.text("comment"),
@@ -217,9 +230,11 @@ export const mentorToSkills = pgTable(
   (t) => ({
     mentorId: t
       .uuid("mentor_id")
+      .notNull()
       .references(() => mentorTable.id, { onDelete: "cascade" }),
     skillId: t
       .uuid("skill_id")
+      .notNull()
       .references(() => skills.id, { onDelete: "cascade" }),
     proficiencyLevel: t
       .text({ enum: ["intermediate", "advanced", "expert"] })

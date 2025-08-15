@@ -90,12 +90,12 @@ function Header() {
                 </Button>
               ) : (
                 <>
-                  <Button variant="outline">
-                    <Link href="/login">Login</Link>
-                  </Button>
-                  <Button variant="outline">
-                    <Link href="/signup">Signup</Link>
-                  </Button>
+                  <Link href="/auth/login">
+                    <Button variant="outline">Login</Button>
+                  </Link>
+                  <Link href="/auth/signup">
+                    <Button variant="outline">Signup</Button>
+                  </Link>
                 </>
               )}
             </div>
