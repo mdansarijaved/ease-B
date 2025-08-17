@@ -4,10 +4,10 @@ import type { FieldPath } from "react-hook-form";
 import React, { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 
-import type { Step, userProfileFormSchemaType } from "@acme/validators";
+import type { Step } from "@acme/validators";
+import { finalUserSchema } from "@acme/db/schema";
 import { Button } from "@acme/ui/button";
 import { Form, useForm } from "@acme/ui/form";
-import { userProfileFormSchema } from "@acme/validators";
 
 import { authClient } from "~/auth/client";
 import AboutStep from "./_components/About";
@@ -44,7 +44,6 @@ const steps: Step[] = [
 
 function JoinPage() {
   const { data: session } = authClient.useSession();
-  console.log("session", session);
 
   const [current, setCurrent] = useState(0);
 
@@ -52,9 +51,7 @@ function JoinPage() {
     () => ({
       basicInformation: {
         name: session?.user.name ?? "",
-
         image: session?.user.image ?? "",
-
         email: session?.user.email ?? "",
         phone: "",
         country: "",
@@ -69,12 +66,13 @@ function JoinPage() {
   );
 
   const form = useForm({
-    schema: userProfileFormSchema,
+    schema: finalUserSchema,
     values: formValues,
+
     mode: "onChange",
   });
 
-  const stepFields: FieldPath<userProfileFormSchemaType>[][] = [
+  const stepFields: FieldPath<typeof finalUserSchema>[][] = [
     ["basicInformation"],
     ["about"],
     ["skills"],
@@ -89,13 +87,13 @@ function JoinPage() {
 
   const goNext = async () => {
     const valid = await form.trigger(stepFields[current]);
-    console.log("valid", valid);
+
     if (valid) setCurrent((s) => Math.min(s + 1, steps.length - 1));
   };
 
   const goBack = () => setCurrent((s) => Math.max(s - 1, 0));
 
-  const onSubmit = (values: userProfileFormSchemaType) => {
+  const onSubmit = (values: typeof finalUserSchema) => {
     console.log("Join submission", values);
   };
 
@@ -201,3 +199,32 @@ function JoinPage() {
   );
 }
 export default JoinPage;
+
+/**
+ *
+ * {
+    "basicInformation": {
+        "name": "Md Ansari",
+        "image": "https://lh3.googleusercontent.com/a/ACg8ocJWBV-9EPMdLVUZRhPCKChAoSKzEJnaiuk4udew0V2CuqUGsg=s96-c",
+        "email": "javedans2003@gmail.com",
+        "phone": "08298342254",
+        "country": "India"
+    },
+    "about": "sfgafg",
+    "skills": [
+        "adf"
+    ],
+    "education": [
+        {
+            "degree": "something",
+            "institution": "standford university",
+            "year": "2025",
+            "active": false
+        }
+    ],
+    "experience": "adfasdf",
+    "languages": [
+        "adf"
+    ]
+}
+ */

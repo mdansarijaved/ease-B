@@ -1,4 +1,5 @@
 import { index, pgTable, primaryKey } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
 
 import { user } from "./auth-schema";
 import { timestamps } from "./column.helper";
@@ -18,6 +19,8 @@ export const mentorTable = pgTable("mentor", (t) => ({
   introduction: t.text("introduction"),
   ...timestamps,
 }));
+
+export const mentorInsertSchema = createInsertSchema(mentorTable);
 
 export const serviceCategory = pgTable("service_category", (t) => ({
   id: t.uuid("id").primaryKey().defaultRandom(),

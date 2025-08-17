@@ -1,13 +1,6 @@
 import type { InferInsertModel, InferSelectModel } from "@acme/db";
-import type { appointmentStatusEnum, dayOfWeekEnum } from "@acme/db/schema";
-import { and, eq, sql } from "@acme/db";
 import { db } from "@acme/db/client";
-import {
-  eventTable,
-  mentorAvailabilityTable,
-  mentorTable,
-  studentRegisteredEvents,
-} from "@acme/db/schema";
+import { mentorTable } from "@acme/db/schema";
 
 export type Mentor = InferSelectModel<typeof mentorTable>;
 export type MentorInsert = InferInsertModel<typeof mentorTable>;

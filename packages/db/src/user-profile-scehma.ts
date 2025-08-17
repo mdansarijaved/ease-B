@@ -107,6 +107,7 @@ export const userWorkHistory = pgTable(
   }),
   (t) => [index("user_profile_work_index").on(t.userProfileId)],
 );
+
 export const userWorkHistoryRelation = relations(
   userWorkHistory,
   ({ one }) => ({
