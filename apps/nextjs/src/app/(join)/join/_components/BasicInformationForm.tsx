@@ -25,7 +25,10 @@ function BasicInformationForm() {
           <FormItem>
             <FormLabel>Tell us about yourself.</FormLabel>
             <FormControl>
-              <Textarea {...field} />
+              <Textarea
+                {...field}
+                className={`${form.formState.errors.bio ? "border-red-500" : ""}`}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>

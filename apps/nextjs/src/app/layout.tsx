@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import { cn } from "@acme/ui";
 import { Toaster } from "@acme/ui/toast";
@@ -7,6 +8,8 @@ import { Toaster } from "@acme/ui/toast";
 import { TRPCReactProvider } from "~/trpc/react";
 
 import "~/app/globals.css";
+
+import Script from "next/script";
 
 import Footer from "~/app/_components/footer";
 import { env } from "~/env";
@@ -52,6 +55,12 @@ const geistMono = Geist_Mono({
 export default function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <Script
+          crossOrigin="anonymous"
+          src="//unpkg.com/react-scan/dist/auto.global.js"
+        />
+      </head>
       <body
         className={cn(
           "min-h-screen bg-background font-sans text-foreground antialiased",
@@ -60,9 +69,11 @@ export default function RootLayout(props: { children: React.ReactNode }) {
         )}
       >
         <TRPCReactProvider>
-          <Header />
-          {props.children}
-          <Footer />
+          <NuqsAdapter>
+            <Header />
+            {props.children}
+            <Footer />
+          </NuqsAdapter>
         </TRPCReactProvider>
 
         <Toaster />

@@ -1,14 +1,16 @@
 "use client";
 
 import type { FieldPath } from "react-hook-form";
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import { parseAsInteger, useQueryState } from "nuqs";
 
 import type { Step, userProfileFormSchemaType } from "@acme/validators";
 import { Button } from "@acme/ui/button";
 import { Form, useForm } from "@acme/ui/form";
 import { userProfileFormSchema } from "@acme/validators";
 
+import { usePersistedForm } from "~/app/hooks/usePersistenForm";
 import BasicInformationForm from "./_components/BasicInformationForm";
 import EducationStep from "./_components/EducationFrom";
 import ExperienceStep from "./_components/ExperienceForm";
@@ -40,16 +42,19 @@ const steps: Step[] = [
 ];
 
 function JoinPage() {
-  const [current, setCurrent] = useState(0);
+  const [query, setQuery] = useQueryState("formStep", {
+    defaultValue: "bio",
+  });
+  const [current, setCurrent] = useQueryState(
+    "current",
+    parseAsInteger.withDefault(0),
+  );
 
-  const form = useForm({
-    schema: userProfileFormSchema,
-    defaultValues: {
-      bio: "",
-      skills: [],
-      education: [],
-      experience: [],
-    },
+  const form = usePersistedForm("userProfileForm", userProfileFormSchema, {
+    bio: "",
+    skills: [],
+    education: [],
+    experience: [],
   });
 
   const stepFields: FieldPath<userProfileFormSchemaType>[][] = [
@@ -67,10 +72,15 @@ function JoinPage() {
   const goNext = async () => {
     const valid = await form.trigger(stepFields[current]);
 
-    if (valid) setCurrent((s) => Math.min(s + 1, steps.length - 1));
+    if (valid) await setCurrent((s) => Math.min(s + 1, steps.length - 1));
+
+    await setQuery(stepFields[current + 1]?.[0] ?? "");
   };
 
-  const goBack = () => setCurrent((s) => Math.max(s - 1, 0));
+  const goBack = async () => {
+    await setCurrent((s) => Math.max(s - 1, 0));
+    await setQuery(stepFields[current - 1]?.[0] ?? "");
+  };
 
   const onSubmit = (values: userProfileFormSchemaType) => {
     console.log("Join submission", values);
@@ -141,10 +151,10 @@ function JoinPage() {
                       exit={{ opacity: 0, y: -8 }}
                       transition={{ duration: 0.2 }}
                     >
-                      {current === 0 && <BasicInformationForm />}
-                      {current === 1 && <SkillsStep />}
-                      {current === 2 && <EducationStep />}
-                      {current === 3 && <ExperienceStep />}
+                      {query === "bio" && <BasicInformationForm />}
+                      {query === "skills" && <SkillsStep />}
+                      {query === "education" && <EducationStep />}
+                      {query === "experience" && <ExperienceStep />}
                     </motion.div>
                   </AnimatePresence>
 

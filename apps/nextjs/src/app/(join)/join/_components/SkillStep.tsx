@@ -1,11 +1,7 @@
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 
 import type { userProfileFormSchemaType } from "@acme/validators";
 import { Button } from "@acme/ui/button";
-import { Calendar } from "@acme/ui/calendar";
-import { Checkbox } from "@acme/ui/checkbox";
 import {
   FormControl,
   FormField,
@@ -15,7 +11,13 @@ import {
   useFieldArray,
 } from "@acme/ui/form";
 import { Input } from "@acme/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@acme/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@acme/ui/select";
 import { Textarea } from "@acme/ui/textarea";
 
 export default function SkillsStep() {
@@ -24,8 +26,6 @@ export default function SkillsStep() {
     control: form.control,
     name: "skills",
   });
-
-  const watchedActive = form.watch("skills");
 
   return (
     <div>
@@ -74,22 +74,7 @@ export default function SkillsStep() {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name={`skills.${idx}.skill.description` as const}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="e.g. Stanford University"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+
               <FormField
                 control={form.control}
                 name={`skills.${idx}.proficiencyLevel` as const}
@@ -97,83 +82,43 @@ export default function SkillsStep() {
                   <FormItem>
                     <FormLabel>Proficiency Level </FormLabel>
                     <FormControl>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            data-empty={!field.value}
-                            className="w-[280px] justify-start text-left font-normal data-[empty=true]:text-muted-foreground"
-                          >
-                            <CalendarIcon />
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0">
-                          <Calendar mode="single" {...field} />
-                        </PopoverContent>
-                      </Popover>
+                      <Select>
+                        <SelectTrigger>
+                          <SelectValue
+                            placeholder="Select proficiency level"
+                            {...field}
+                          />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="beginner">Beginner</SelectItem>
+                          <SelectItem value="intermediate">
+                            Intermediate
+                          </SelectItem>
+                          <SelectItem value="advanced">Advanced</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
-              <FormField
-                control={form.control}
-                name={`education.${idx}.active` as const}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Currently Studying</FormLabel>
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Only render End Year when not active (not currently studying) */}
-              {!watchedActive?.[idx]?.active && (
-                <FormField
-                  control={form.control}
-                  name={`education.${idx}.endYear` as const}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>End Year</FormLabel>
-                      <FormControl>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="outline"
-                              data-empty={!field.value}
-                              className="w-[280px] justify-start text-left font-normal data-[empty=true]:text-muted-foreground"
-                            >
-                              <CalendarIcon />
-                              {field.value ? (
-                                format(field.value, "PPP")
-                              ) : (
-                                <span>Pick a date</span>
-                              )}
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0">
-                            <Calendar mode="single" {...field} />
-                          </PopoverContent>
-                        </Popover>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
             </div>
+            <FormField
+              control={form.control}
+              name={`skills.${idx}.skill.description` as const}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="e.g. Stanford University"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <div className="mt-3 flex justify-end">
               <Button type="button" variant="ghost" onClick={() => remove(idx)}>
                 Remove

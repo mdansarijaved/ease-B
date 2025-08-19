@@ -16,6 +16,7 @@ import {
 } from "@acme/ui/form";
 import { Input } from "@acme/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@acme/ui/popover";
+import { Textarea } from "@acme/ui/textarea";
 
 export default function EducationStep() {
   const form = useFormContext<userProfileFormSchemaType>();
@@ -25,6 +26,7 @@ export default function EducationStep() {
   });
 
   const watchedActive = form.watch("education");
+  console.log(form.formState.errors);
 
   return (
     <div>
@@ -42,7 +44,7 @@ export default function EducationStep() {
               institution: "",
               description: "",
               startYear: new Date(),
-              endYear: new Date(),
+              endYear: undefined,
               active: true,
             })
           }
@@ -60,7 +62,7 @@ export default function EducationStep() {
 
         {fields.map((field, idx) => (
           <div key={field.id} className="rounded border p-4">
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-2">
               <FormField
                 control={form.control}
                 name={`education.${idx}.degree` as const}
@@ -93,11 +95,29 @@ export default function EducationStep() {
                   </FormItem>
                 )}
               />
+            </div>
+            <FormField
+              control={form.control}
+              name={`education.${idx}.description` as const}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="e.g. How was your experience?"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="grid grid-cols-2 items-center justify-center gap-2 py-4">
               <FormField
                 control={form.control}
                 name={`education.${idx}.startYear` as const}
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col">
                     <FormLabel>Start Year</FormLabel>
                     <FormControl>
                       <Popover>
@@ -105,14 +125,10 @@ export default function EducationStep() {
                           <Button
                             variant="outline"
                             data-empty={!field.value}
-                            className="w-[280px] justify-start text-left font-normal data-[empty=true]:text-muted-foreground"
+                            className="w-full max-w-[200px] justify-start text-left font-normal data-[empty=true]:text-muted-foreground"
                           >
                             <CalendarIcon />
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
+                            {format(field.value, "PPP")}
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0">
@@ -129,7 +145,7 @@ export default function EducationStep() {
                 control={form.control}
                 name={`education.${idx}.active` as const}
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex h-full flex-col">
                     <FormLabel>Currently Studying</FormLabel>
                     <FormControl>
                       <Checkbox
@@ -142,8 +158,7 @@ export default function EducationStep() {
                 )}
               />
 
-              {/* Only render End Year when not active (not currently studying) */}
-              {!watchedActive?.[idx]?.active && (
+              {!watchedActive[idx]?.active && (
                 <FormField
                   control={form.control}
                   name={`education.${idx}.endYear` as const}
@@ -152,11 +167,11 @@ export default function EducationStep() {
                       <FormLabel>End Year</FormLabel>
                       <FormControl>
                         <Popover>
-                          <PopoverTrigger asChild>
+                          <PopoverTrigger className="" asChild>
                             <Button
                               variant="outline"
                               data-empty={!field.value}
-                              className="w-[280px] justify-start text-left font-normal data-[empty=true]:text-muted-foreground"
+                              className="w-full max-w-[200px] justify-start text-left font-normal data-[empty=true]:text-muted-foreground"
                             >
                               <CalendarIcon />
                               {field.value ? (

@@ -27,6 +27,7 @@
     "lucide-react": "^0.537.0",
     "motion": "^12.23.12",
     "next": "^15.3.3",
+    "nuqs": "^2.4.3",
     "react": "catalog:react19",
     "react-dom": "catalog:react19",
     "superjson": "2.2.2",

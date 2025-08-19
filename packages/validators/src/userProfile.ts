@@ -35,7 +35,7 @@ export const experienceSchema = z.object({
 });
 
 export const userProfileFormSchema = z.object({
-  bio: z.string().max(2000).optional().or(z.literal("")),
+  bio: z.string().min(100).max(2000),
   skills: userSkillSchema.array().min(1).max(10),
   education: educationSchema.array().min(1).max(10),
   experience: experienceSchema.array().min(1).max(10),
