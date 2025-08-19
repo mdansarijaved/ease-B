@@ -1,7 +1,7 @@
 import { z } from "zod/v4";
 
 export interface Step {
-  key: "basicInformation" | "about" | "skills" | "education" | "experience";
+  key: "bio" | "skills" | "education" | "experience";
   title: string;
   description: string;
 }
