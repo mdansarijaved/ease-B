@@ -66,7 +66,7 @@ function JoinPage() {
   );
 
   const form = useForm({
-    schema: finalUserSchema,
+    schema: ,
     values: formValues,
     mode: "onChange",
   });

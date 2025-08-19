@@ -6,44 +6,39 @@ export interface Step {
   description: string;
 }
 
-export const basicInformationFormSchema = z.object({
-  name: z.string().min(1),
-  image: z.string().min(1),
-  email: z.email().min(1),
-  phone: z.string().min(1),
-  country: z.string().min(1),
+export const skillsSchema = z.object({
+  name: z.string().min(2).max(100),
+  description: z.string().min(2).max(2000),
 });
 
-export const educationItemSchema = z.object({
-  degree: z.string().min(2, "Degree is required"),
-  institution: z.string().min(2, "Institution is required"),
-  year: z
-    .string()
-    .min(4, "Year is required")
-    .regex(/^\d{4}$/g, "Enter a valid year"),
+export const userSkillSchema = z.object({
+  skill: skillsSchema,
+  proficiencyLevel: z.enum(["beginner", "intermediate", "advanced", "expert"]),
+});
+
+export const educationSchema = z.object({
+  institution: z.string().min(2).max(100),
+  degree: z.string().min(2).max(100),
   active: z.boolean(),
+  description: z.string().min(2).max(2000),
+  startYear: z.date(),
+  endYear: z.date().optional(),
 });
 
-export const experienceTextSchema = z
-  .string()
-  .max(10000, "Too long")
-  .optional()
-  .or(z.literal(""));
+export const experienceSchema = z.object({
+  company: z.string().min(2).max(100),
+  position: z.string().min(2).max(100),
+  current: z.boolean(),
+  description: z.string().min(2).max(2000),
+  startDate: z.date(),
+  endDate: z.date().optional(),
+});
 
 export const userProfileFormSchema = z.object({
-  basicInformation: basicInformationFormSchema,
-  about: z.string().max(2000).optional().or(z.literal("")),
-  skills: z
-    .array(z.string().min(1))
-    .min(1, "Add at least one skill")
-    .max(20, "Too many skills"),
-  education: z.array(educationItemSchema).min(0).max(10),
-  experience: experienceTextSchema,
-  languages: z.array(z.string().min(1)).min(0).max(20),
+  bio: z.string().max(2000).optional().or(z.literal("")),
+  skills: userSkillSchema.array().min(1).max(10),
+  education: educationSchema.array().min(1).max(10),
+  experience: experienceSchema.array().min(1).max(10),
 });
-
-export type BasicInformationFormSchemaType = z.infer<
-  typeof basicInformationFormSchema
->;
 
 export type userProfileFormSchemaType = z.infer<typeof userProfileFormSchema>;
