@@ -4,13 +4,11 @@ import type { FieldPath } from "react-hook-form";
 import React, { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 
-import type { Step } from "@acme/validators";
-import { finalUserSchema } from "@acme/db/schema";
+import type { Step, userProfileFormSchemaType } from "@acme/validators";
 import { Button } from "@acme/ui/button";
 import { Form, useForm } from "@acme/ui/form";
+import { userProfileFormSchema } from "@acme/validators";
 
-import { authClient } from "~/auth/client";
-import AboutStep from "./_components/About";
 import BasicInformationForm from "./_components/BasicInformationForm";
 import EducationStep from "./_components/EducationFrom";
 import ExperienceStep from "./_components/ExperienceForm";
@@ -20,11 +18,10 @@ import { Stepper } from "./_components/Steppper";
 
 const steps: Step[] = [
   {
-    key: "basicInformation",
+    key: "bio",
     title: "Who are you?",
     description: "Choose your role",
   },
-  { key: "about", title: "About you", description: "Tell us about yourself" },
   {
     key: "skills",
     title: "Your skills",
@@ -43,37 +40,20 @@ const steps: Step[] = [
 ];
 
 function JoinPage() {
-  const { data: session } = authClient.useSession();
-
   const [current, setCurrent] = useState(0);
 
-  const formValues = useMemo(
-    () => ({
-      basicInformation: {
-        name: session?.user.name ?? "",
-        image: session?.user.image ?? "",
-        email: session?.user.email ?? "",
-        phone: "",
-        country: "",
-      },
-      about: "",
+  const form = useForm({
+    schema: userProfileFormSchema,
+    defaultValues: {
+      bio: "",
       skills: [],
       education: [],
-      experience: "",
-      languages: [],
-    }),
-    [session],
-  );
-
-  const form = useForm({
-    schema: ,
-    values: formValues,
-    mode: "onChange",
+      experience: [],
+    },
   });
 
-  const stepFields: FieldPath<typeof finalUserSchema>[][] = [
-    ["basicInformation"],
-    ["about"],
+  const stepFields: FieldPath<userProfileFormSchemaType>[][] = [
+    ["bio"],
     ["skills"],
     ["education"],
     ["experience"],
@@ -92,7 +72,7 @@ function JoinPage() {
 
   const goBack = () => setCurrent((s) => Math.max(s - 1, 0));
 
-  const onSubmit = (values: typeof finalUserSchema) => {
+  const onSubmit = (values: userProfileFormSchemaType) => {
     console.log("Join submission", values);
   };
 
@@ -119,7 +99,7 @@ function JoinPage() {
               <header className="mb-6">
                 {(() => {
                   const step: Step = steps[current] ?? {
-                    key: "basicInformation",
+                    key: "bio",
                     title: "Who are you?",
                     description: "Choose your role",
                   };
@@ -162,10 +142,9 @@ function JoinPage() {
                       transition={{ duration: 0.2 }}
                     >
                       {current === 0 && <BasicInformationForm />}
-                      {current === 1 && <AboutStep />}
-                      {current === 2 && <SkillsStep />}
-                      {current === 3 && <EducationStep />}
-                      {current === 4 && <ExperienceStep />}
+                      {current === 1 && <SkillsStep />}
+                      {current === 2 && <EducationStep />}
+                      {current === 3 && <ExperienceStep />}
                     </motion.div>
                   </AnimatePresence>
 

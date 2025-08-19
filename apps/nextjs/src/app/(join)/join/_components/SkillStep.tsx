@@ -1,154 +1,186 @@
-import { useState } from "react";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 
 import type { userProfileFormSchemaType } from "@acme/validators";
 import { Button } from "@acme/ui/button";
+import { Calendar } from "@acme/ui/calendar";
+import { Checkbox } from "@acme/ui/checkbox";
 import {
-  FormDescription,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
+  useFieldArray,
 } from "@acme/ui/form";
 import { Input } from "@acme/ui/input";
-import { Label } from "@acme/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@acme/ui/popover";
+import { Textarea } from "@acme/ui/textarea";
 
 export default function SkillsStep() {
   const form = useFormContext<userProfileFormSchemaType>();
-  const [skillInput, setSkillInput] = useState("");
-  const [languageInput, setLanguageInput] = useState("");
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "skills",
+  });
 
-  const skills = form.watch("skills");
-  const languages = form.watch("languages");
-
-  const addSkill = () => {
-    const s = skillInput.trim();
-    if (!s) return;
-    if (skills.includes(s)) return;
-    form.setValue("skills", [...skills, s], {
-      shouldValidate: true,
-      shouldDirty: true,
-    });
-    setSkillInput("");
-  };
-
-  const removeSkill = (s: string) => {
-    form.setValue(
-      "skills",
-      skills.filter((x) => x !== s),
-      { shouldValidate: true, shouldDirty: true },
-    );
-  };
-
-  const addLanguage = () => {
-    const s = languageInput.trim();
-    if (!s) return;
-    if (languages.includes(s)) return;
-    form.setValue("languages", [...languages, s], {
-      shouldValidate: true,
-      shouldDirty: true,
-    });
-    setLanguageInput("");
-  };
-
-  const removeLanguage = (s: string) => {
-    form.setValue(
-      "languages",
-      languages.filter((x) => x !== s),
-      { shouldValidate: true, shouldDirty: true },
-    );
-  };
+  const watchedActive = form.watch("skills");
 
   return (
     <div>
-      <FormField
-        control={form.control}
-        name="skills"
-        render={() => (
-          <FormItem>
-            <FormLabel>Add your skills</FormLabel>
-            <FormDescription>
-              Press Enter or click Add to save a skill.
-            </FormDescription>
-            <div className="flex gap-2">
-              <Input
-                placeholder="e.g. React, Data Science, UI/UX"
-                value={skillInput}
-                onChange={(e) => setSkillInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    addSkill();
-                  }
-                }}
-              />
-              <Button type="button" onClick={addSkill}>
-                Add
-              </Button>
-            </div>
-            {skills.length > 0 && (
-              <div className="mt-3 flex flex-wrap gap-2">
-                {skills.map((s) => (
-                  <span
-                    key={s}
-                    className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm text-primary"
-                  >
-                    {s}
-                    <button
-                      type="button"
-                      onClick={() => removeSkill(s)}
-                      className="text-primary/70 hover:text-primary"
-                      aria-label={`Remove ${s}`}
-                    >
-                      ×
-                    </button>
-                  </span>
-                ))}
-              </div>
-            )}
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      <div className="mt-6 space-y-2">
-        <Label>Languages</Label>
-        <div className="flex gap-2">
-          <Input
-            placeholder="e.g. English, Hindi"
-            value={languageInput}
-            onChange={(e) => setLanguageInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                addLanguage();
-              }
-            }}
-          />
-          <Button type="button" onClick={addLanguage}>
-            Add
-          </Button>
+      <div className="mb-3 flex items-center justify-between">
+        <div>
+          <div className="text-sm font-medium">Add skills</div>
+          <div className="text-xs text-muted-foreground">Skills</div>
         </div>
-        {languages.length > 0 && (
-          <div className="mt-2 flex flex-wrap gap-2">
-            {languages.map((s) => (
-              <span
-                key={s}
-                className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm text-primary"
-              >
-                {s}
-                <button
-                  type="button"
-                  onClick={() => removeLanguage(s)}
-                  className="text-primary/70 hover:text-primary"
-                  aria-label={`Remove ${s}`}
-                >
-                  ×
-                </button>
-              </span>
-            ))}
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() =>
+            append({
+              skill: {
+                name: "",
+                description: "",
+              },
+              proficiencyLevel: "beginner",
+            })
+          }
+        >
+          Add item
+        </Button>
+      </div>
+
+      <div className="space-y-4">
+        {fields.length === 0 && (
+          <div className="rounded-md border border-dashed p-4 text-sm text-muted-foreground">
+            No education added yet.
           </div>
         )}
+
+        {fields.map((field, idx) => (
+          <div key={field.id} className="rounded border p-4">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <FormField
+                control={form.control}
+                name={`skills.${idx}.skill.name` as const}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Skill Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g. React" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name={`skills.${idx}.skill.description` as const}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="e.g. Stanford University"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name={`skills.${idx}.proficiencyLevel` as const}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Proficiency Level </FormLabel>
+                    <FormControl>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            data-empty={!field.value}
+                            className="w-[280px] justify-start text-left font-normal data-[empty=true]:text-muted-foreground"
+                          >
+                            <CalendarIcon />
+                            {field.value ? (
+                              format(field.value, "PPP")
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0">
+                          <Calendar mode="single" {...field} />
+                        </PopoverContent>
+                      </Popover>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name={`education.${idx}.active` as const}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Currently Studying</FormLabel>
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Only render End Year when not active (not currently studying) */}
+              {!watchedActive?.[idx]?.active && (
+                <FormField
+                  control={form.control}
+                  name={`education.${idx}.endYear` as const}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>End Year</FormLabel>
+                      <FormControl>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              data-empty={!field.value}
+                              className="w-[280px] justify-start text-left font-normal data-[empty=true]:text-muted-foreground"
+                            >
+                              <CalendarIcon />
+                              {field.value ? (
+                                format(field.value, "PPP")
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0">
+                            <Calendar mode="single" {...field} />
+                          </PopoverContent>
+                        </Popover>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+            </div>
+            <div className="mt-3 flex justify-end">
+              <Button type="button" variant="ghost" onClick={() => remove(idx)}>
+                Remove
+              </Button>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -1,7 +1,11 @@
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 
 import type { userProfileFormSchemaType } from "@acme/validators";
 import { Button } from "@acme/ui/button";
+import { Calendar } from "@acme/ui/calendar";
+import { Checkbox } from "@acme/ui/checkbox";
 import {
   FormControl,
   FormField,
@@ -11,6 +15,7 @@ import {
   useFieldArray,
 } from "@acme/ui/form";
 import { Input } from "@acme/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@acme/ui/popover";
 
 export default function EducationStep() {
   const form = useFormContext<userProfileFormSchemaType>();
@@ -18,6 +23,8 @@ export default function EducationStep() {
     control: form.control,
     name: "education",
   });
+
+  const watchedActive = form.watch("education");
 
   return (
     <div>
@@ -30,7 +37,14 @@ export default function EducationStep() {
           type="button"
           variant="outline"
           onClick={() =>
-            append({ degree: "", institution: "", year: "", active: true })
+            append({
+              degree: "",
+              institution: "",
+              description: "",
+              startYear: new Date(),
+              endYear: new Date(),
+              active: true,
+            })
           }
         >
           Add item
@@ -81,39 +95,87 @@ export default function EducationStep() {
               />
               <FormField
                 control={form.control}
-                name={`education.${idx}.year` as const}
+                name={`education.${idx}.startYear` as const}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Year</FormLabel>
+                    <FormLabel>Start Year</FormLabel>
                     <FormControl>
-                      <Input
-                        inputMode="numeric"
-                        placeholder="e.g. 2025"
-                        {...field}
-                      />
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            data-empty={!field.value}
+                            className="w-[280px] justify-start text-left font-normal data-[empty=true]:text-muted-foreground"
+                          >
+                            <CalendarIcon />
+                            {field.value ? (
+                              format(field.value, "PPP")
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0">
+                          <Calendar mode="single" {...field} />
+                        </PopoverContent>
+                      </Popover>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name={`education.${idx}.active` as const}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Active</FormLabel>
+                    <FormLabel>Currently Studying</FormLabel>
                     <FormControl>
-                      <input
-                        type="checkbox"
-                        className="size-4 rounded border"
-                        checked={!!field.value}
-                        onChange={(e) => field.onChange(e.target.checked)}
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
+              {/* Only render End Year when not active (not currently studying) */}
+              {!watchedActive?.[idx]?.active && (
+                <FormField
+                  control={form.control}
+                  name={`education.${idx}.endYear` as const}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>End Year</FormLabel>
+                      <FormControl>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              data-empty={!field.value}
+                              className="w-[280px] justify-start text-left font-normal data-[empty=true]:text-muted-foreground"
+                            >
+                              <CalendarIcon />
+                              {field.value ? (
+                                format(field.value, "PPP")
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0">
+                            <Calendar mode="single" {...field} />
+                          </PopoverContent>
+                        </Popover>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
             </div>
             <div className="mt-3 flex justify-end">
               <Button type="button" variant="ghost" onClick={() => remove(idx)}>

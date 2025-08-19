@@ -6,15 +6,11 @@ import { cn } from "@acme/ui";
 export function Stepper(props: { current: number }) {
   const items: { key: Step["key"]; label: string; icon: React.ReactNode }[] = [
     {
-      key: "basicInformation",
+      key: "bio",
       label: "Basic Information",
       icon: <UserCog className="h-3.5 w-3.5" />,
     },
-    {
-      key: "about",
-      label: "About",
-      icon: <UserCog className="h-3.5 w-3.5" />,
-    },
+
     {
       key: "skills",
       label: "Skills",
