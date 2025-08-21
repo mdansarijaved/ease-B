@@ -7,7 +7,7 @@ import { parseAsInteger, useQueryState } from "nuqs";
 
 import type { Step, userProfileFormSchemaType } from "@acme/validators";
 import { Button } from "@acme/ui/button";
-import { Form, useForm } from "@acme/ui/form";
+import { Form } from "@acme/ui/form";
 import { userProfileFormSchema } from "@acme/validators";
 
 import { usePersistedForm } from "~/app/hooks/usePersistenForm";
@@ -187,32 +187,3 @@ function JoinPage() {
   );
 }
 export default JoinPage;
-
-/**
- *
- * {
-    "basicInformation": {
-        "name": "Md Ansari",
-        "image": "https://lh3.googleusercontent.com/a/ACg8ocJWBV-9EPMdLVUZRhPCKChAoSKzEJnaiuk4udew0V2CuqUGsg=s96-c",
-        "email": "javedans2003@gmail.com",
-        "phone": "08298342254",
-        "country": "India"
-    },
-    "about": "sfgafg",
-    "skills": [
-        "adf"
-    ],
-    "education": [
-        {
-            "degree": "something",
-            "institution": "standford university",
-            "year": "2025",
-            "active": false
-        }
-    ],
-    "experience": "adfasdf",
-    "languages": [
-        "adf"
-    ]
-}
- */

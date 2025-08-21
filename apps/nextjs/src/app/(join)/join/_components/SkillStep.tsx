@@ -82,12 +82,12 @@ export default function SkillsStep() {
                   <FormItem>
                     <FormLabel>Proficiency Level </FormLabel>
                     <FormControl>
-                      <Select>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
                         <SelectTrigger>
-                          <SelectValue
-                            placeholder="Select proficiency level"
-                            {...field}
-                          />
+                          <SelectValue placeholder="Select proficiency level" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="beginner">Beginner</SelectItem>

@@ -3,6 +3,7 @@ import { CalendarIcon } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 
 import type { userProfileFormSchemaType } from "@acme/validators";
+import { cn } from "@acme/ui";
 import { Button } from "@acme/ui/button";
 import { Calendar } from "@acme/ui/calendar";
 import { Checkbox } from "@acme/ui/checkbox";
@@ -106,29 +107,35 @@ export default function ExperienceForm() {
                 control={form.control}
                 name={`experience.${idx}.startDate` as const}
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col">
                     <FormLabel>Start Date</FormLabel>
-                    <FormControl>
-                      <Popover>
-                        <PopoverTrigger asChild>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
                           <Button
-                            variant="outline"
-                            data-empty={!field.value}
-                            className="w-[280px] justify-start text-left font-normal data-[empty=true]:text-muted-foreground"
-                          >
-                            <CalendarIcon />
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date</span>
+                            variant={"outline"}
+                            className={cn(
+                              "w-[240px] pl-3 text-left font-normal",
                             )}
+                          >
+                            {format(field.value, "PPP")}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0">
-                          <Calendar mode="single" {...field} />
-                        </PopoverContent>
-                      </Popover>
-                    </FormControl>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          disabled={(date) =>
+                            date > new Date() || date < new Date("1900-01-01")
+                          }
+                          captionLayout="dropdown"
+                        />
+                      </PopoverContent>
+                    </Popover>
+
                     <FormMessage />
                   </FormItem>
                 )}
@@ -154,31 +161,40 @@ export default function ExperienceForm() {
                 control={form.control}
                 name={`experience.${idx}.endDate` as const}
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col">
                     <FormLabel>End Date</FormLabel>
-                    <FormControl>
-                      <Popover>
-                        <PopoverTrigger asChild>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
                           <Button
-                            variant="outline"
-                            data-empty={
-                              !form.getValues(`experience.${idx}.endDate`)
-                            }
-                            className="w-[280px] justify-start text-left font-normal data-[empty=true]:text-muted-foreground"
+                            variant={"outline"}
+                            className={cn(
+                              "w-[240px] pl-3 text-left font-normal",
+                              !field.value && "text-muted-foreground",
+                            )}
                           >
-                            <CalendarIcon />
                             {field.value ? (
                               format(field.value, "PPP")
                             ) : (
                               <span>Pick a date</span>
                             )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0">
-                          <Calendar mode="single" {...field} />
-                        </PopoverContent>
-                      </Popover>
-                    </FormControl>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          disabled={(date) =>
+                            date > new Date() || date < new Date("1900-01-01")
+                          }
+                          captionLayout="dropdown"
+                        />
+                      </PopoverContent>
+                    </Popover>
+
                     <FormMessage />
                   </FormItem>
                 )}

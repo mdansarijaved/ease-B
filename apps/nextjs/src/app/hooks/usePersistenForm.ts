@@ -1,6 +1,6 @@
+import type { FieldValues } from "react-hook-form";
 import type { ZodType } from "zod/v4";
 import { useEffect } from "react";
-import { FieldValues } from "react-hook-form";
 
 import { useForm } from "@acme/ui/form";
 
