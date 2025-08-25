@@ -16,23 +16,51 @@ export const userSkillSchema = z.object({
   proficiencyLevel: z.enum(["beginner", "intermediate", "advanced", "expert"]),
 });
 
-export const educationSchema = z.object({
-  institution: z.string().min(2).max(100),
-  degree: z.string().min(2).max(100),
-  active: z.boolean(),
-  description: z.string().min(2).max(2000),
-  startYear: z.date(),
-  endYear: z.date().optional(),
-});
+export const educationSchema = z
+  .object({
+    institution: z.string().min(2).max(100),
+    degree: z.string().min(2).max(100),
+    active: z.boolean(),
+    description: z.string().min(2).max(2000),
+    startYear: z.date(),
+    endYear: z.date().optional(),
+  })
+  .refine(
+    (data) => {
+      if (!data.endYear) {
+        return true;
+      }
+      return data.endYear >= data.startYear;
+    },
+    {
+      message: "End year must be after start year",
+      path: ["endYear"],
+    },
+  );
 
-export const experienceSchema = z.object({
-  company: z.string().min(2).max(100),
-  position: z.string().min(2).max(100),
-  current: z.boolean(),
-  description: z.string().min(2).max(2000),
-  startDate: z.date(),
-  endDate: z.date().optional(),
-});
+export const experienceSchema = z
+  .object({
+    company: z.string().min(2).max(100),
+    position: z.string().min(2).max(100),
+    current: z.boolean(),
+    description: z.string().min(2).max(2000),
+    startDate: z
+      .date()
+      .max(new Date(), { message: "Start date cannot be in the future" }),
+    endDate: z.date().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.current && !data.endDate) {
+        return true;
+      }
+      return data.endDate ? data.endDate >= data.startDate : true;
+    },
+    {
+      message: "End date must be after start date",
+      path: ["endDate"],
+    },
+  );
 
 export const userProfileFormSchema = z.object({
   bio: z.string().min(100).max(2000),

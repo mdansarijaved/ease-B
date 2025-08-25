@@ -70,11 +70,14 @@ function JoinPage() {
   );
 
   const goNext = async () => {
+    // @ts-expect-error stepfield type error
     const valid = await form.trigger(stepFields[current]);
+    console.log(valid);
 
-    if (valid) await setCurrent((s) => Math.min(s + 1, steps.length - 1));
-
-    await setQuery(stepFields[current + 1]?.[0] ?? "");
+    if (valid) {
+      await setCurrent((s) => Math.min(s + 1, steps.length - 1));
+      await setQuery(stepFields[current + 1]?.[0] ?? "");
+    }
   };
 
   const goBack = async () => {

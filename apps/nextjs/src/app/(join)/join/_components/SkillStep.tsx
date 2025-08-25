@@ -27,6 +27,8 @@ export default function SkillsStep() {
     name: "skills",
   });
 
+  console.log(form.formState.errors);
+
   return (
     <div>
       <div className="mb-3 flex items-center justify-between">
