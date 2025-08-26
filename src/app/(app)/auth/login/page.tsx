@@ -1,6 +1,5 @@
 import React from "react";
-
-import { AuthShowcase } from "~/app/_components/auth-showcase";
+import { AuthShowcase } from "~/components/auth-showcase";
 
 function LoginPage() {
   return (

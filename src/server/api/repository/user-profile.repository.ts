@@ -1,14 +1,14 @@
 import { eq } from "drizzle-orm";
 
-import type { db as Database } from "@acme/db/client";
-import type { userProfileFormSchemaType } from "@acme/validators";
+import type { db as Database } from "~/server/db/client";
 import {
   skills,
   userEducation,
   userProfileTable,
   userProfileToSkills,
   userWorkHistory,
-} from "@acme/db/schema";
+} from "~/server/db/schema";
+import type { userProfileFormSchemaType } from "~/vlidators";
 
 export class UserProfileRepository {
   private db: typeof Database;

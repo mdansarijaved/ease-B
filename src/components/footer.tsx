@@ -2,9 +2,8 @@
 
 import React from "react";
 import { Github, Linkedin, Twitter } from "lucide-react";
+import { cn } from "~/lib/utils";
 import { motion } from "motion/react";
-
-import { cn } from "@acme/ui";
 
 interface FooterProps {
   className?: string;
@@ -32,7 +31,7 @@ export default function Footer({ className }: FooterProps) {
   return (
     <footer
       className={cn(
-        "relative w-full overflow-hidden bg-primary-foreground",
+        "bg-primary-foreground relative w-full overflow-hidden",
         className,
       )}
       aria-label="Site footer"
@@ -45,13 +44,13 @@ export default function Footer({ className }: FooterProps) {
       >
         <div className="grid gap-8 py-10 md:grid-cols-12">
           <div className="md:col-span-4">
-            <div className="text-2xl font-bold text-primary">Butter.</div>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <div className="text-primary text-2xl font-bold">Butter.</div>
+            <p className="text-muted-foreground mt-2 text-sm">
               Built for teams of today, like yours. Learn, mentor, and grow in
               one place.
             </p>
 
-            <div className="mt-6 flex items-center gap-3 text-muted-foreground">
+            <div className="text-muted-foreground mt-6 flex items-center gap-3">
               <a
                 aria-label="Twitter"
                 href="#"
@@ -74,7 +73,7 @@ export default function Footer({ className }: FooterProps) {
 
           <div className="md:col-span-8">
             <div className="grid gap-6 md:grid-cols-3">
-              <div className="md:border-l md:border-primary/15 md:px-6">
+              <div className="md:border-primary/15 md:border-l md:px-6">
                 <FooterCol
                   title="Benefits"
                   items={[
@@ -85,13 +84,13 @@ export default function Footer({ className }: FooterProps) {
                   ]}
                 />
               </div>
-              <div className="md:border-l md:border-primary/15 md:px-6">
+              <div className="md:border-primary/15 md:border-l md:px-6">
                 <FooterCol
                   title="Solutions"
                   items={["Startups", "Mid-sized", "Developers"]}
                 />
               </div>
-              <div className="md:border-l md:border-primary/15 md:px-6">
+              <div className="md:border-primary/15 md:border-l md:px-6">
                 <FooterCol
                   title="Resources"
                   items={[
@@ -109,7 +108,7 @@ export default function Footer({ className }: FooterProps) {
         </div>
 
         <div className="mt-6 border-t pt-6">
-          <div className="text-sm font-semibold tracking-wide text-foreground">
+          <div className="text-foreground text-sm font-semibold tracking-wide">
             Our Blog
           </div>
           <div className="mt-3 flex flex-wrap gap-2 text-[11px]">
@@ -117,7 +116,7 @@ export default function Footer({ className }: FooterProps) {
               (tag) => (
                 <span
                   key={tag}
-                  className="rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-primary"
+                  className="border-primary/30 bg-primary/10 text-primary rounded-full border px-2.5 py-1"
                 >
                   {tag}
                 </span>
@@ -136,7 +135,7 @@ export default function Footer({ className }: FooterProps) {
           </div>
         </div>
 
-        <div className="mt-6 border-t py-6 text-xs text-muted-foreground">
+        <div className="text-muted-foreground mt-6 border-t py-6 text-xs">
           <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
             <div>
               © {new Date().getFullYear()} Butter.. Built with love from India.
@@ -162,15 +161,15 @@ export default function Footer({ className }: FooterProps) {
 function FooterCol(props: { title: string; items: string[] }) {
   return (
     <div>
-      <div className="text-sm font-semibold tracking-wide text-foreground">
+      <div className="text-foreground text-sm font-semibold tracking-wide">
         {props.title}
       </div>
-      <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+      <ul className="text-muted-foreground mt-3 space-y-2 text-sm">
         {props.items.map((item) => (
           <li key={item}>
             <a
               href="#"
-              className="transition-all duration-300 hover:text-primary/80"
+              className="hover:text-primary/80 transition-all duration-300"
             >
               {item}
             </a>
@@ -183,11 +182,11 @@ function FooterCol(props: { title: string; items: string[] }) {
 
 function BlogCard(props: { title: string; desc: string }) {
   return (
-    <a className="group block rounded-xl border bg-card/50 p-3 transition-colors hover:bg-card">
-      <div className="text-sm font-medium text-foreground group-hover:text-primary">
+    <a className="group bg-card/50 hover:bg-card block rounded-xl border p-3 transition-colors">
+      <div className="text-foreground group-hover:text-primary text-sm font-medium">
         {props.title}
       </div>
-      <div className="mt-1 text-[12px] text-muted-foreground">{props.desc}</div>
+      <div className="text-muted-foreground mt-1 text-[12px]">{props.desc}</div>
     </a>
   );
 }

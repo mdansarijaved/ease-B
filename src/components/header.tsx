@@ -5,17 +5,26 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChevronDownIcon, MoveRight } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-
-import { Button } from "@acme/ui/button";
-
 import { authClient } from "~/auth/client";
-import { useTRPC } from "~/trpc/react";
+import { Button } from "./ui/button";
+import { api } from "~/trpc/react";
 
 function Header() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const user = authClient.useSession();
+  console.log(user);
   const isLoggedIn = !!user.data?.user;
   const isNormalUser = user.data?.user.role === "user";
+  const userProfile = api.userProfile.get.useQuery({
+    id: user.data?.user.id ?? "",
+  });
+
+  let userHasProfile = true;
+  if (!userProfile.data) {
+    userHasProfile = false;
+  }
+
+  console.log(userHasProfile);
 
   const features = [
     {
@@ -50,11 +59,11 @@ function Header() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="relative text-neutral-700 shadow-sm"
+      className="relative w-full text-neutral-700 shadow-sm"
     >
       <nav className="mx-auto">
         <div className="relative">
-          <div className="container grid h-16 grid-cols-3 items-center justify-between px-6">
+          <div className="container mx-auto grid h-16 grid-cols-3 items-center justify-between px-6">
             <div className="flex items-center gap-2">
               <div
                 className="relative"
@@ -108,11 +117,11 @@ function Header() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3 }}
-                className="absolute left-0 top-full z-50 flex w-full border-t border-gray-100 bg-white shadow-sm"
+                className="absolute top-full left-0 z-50 flex w-full border-t border-gray-100 bg-white shadow-sm"
                 onMouseEnter={() => setIsDropdownOpen(true)}
                 onMouseLeave={() => setIsDropdownOpen(false)}
               >
-                <div className="container mx-auto flex w-full items-center justify-center gap-20 px-6 pb-6 pt-4">
+                <div className="container mx-auto flex w-full items-center justify-center gap-20 px-6 pt-4 pb-6">
                   <div className="grid flex-1 grid-cols-2 gap-10 pt-4">
                     {features.map((feature) => (
                       <Link
@@ -121,14 +130,14 @@ function Header() {
                         className="group flex items-center justify-between rounded-lg p-3 transition-colors hover:bg-gray-50"
                       >
                         <div className="flex flex-col gap-1">
-                          <div className="text-sm font-medium text-gray-900 group-hover:text-primary">
+                          <div className="group-hover:text-primary text-sm font-medium text-gray-900">
                             {feature.name}
                           </div>
-                          <div className="group-hover:primary text-xs text-gray-500 group-hover:text-primary/80">
+                          <div className="group-hover:primary group-hover:text-primary/80 text-xs text-gray-500">
                             {feature.description}
                           </div>
                         </div>
-                        <MoveRight className="h-4 w-4 group-hover:text-primary" />
+                        <MoveRight className="group-hover:text-primary h-4 w-4" />
                       </Link>
                     ))}
                   </div>

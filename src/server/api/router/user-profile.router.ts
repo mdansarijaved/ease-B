@@ -1,11 +1,10 @@
 import type { TRPCRouterRecord } from "@trpc/server";
 import { z } from "zod/v4";
 
-import { db } from "@acme/db/client";
-import { userProfileFormSchema } from "@acme/validators";
-
 import { UserProfileRepository } from "../repository/user-profile.repository";
 import { protectedProcedure } from "../trpc";
+import { db } from "~/server/db/client";
+import { userProfileFormSchema } from "~/vlidators";
 
 const userprofileRepo = new UserProfileRepository(db);
 

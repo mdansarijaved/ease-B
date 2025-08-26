@@ -2,23 +2,24 @@
 
 import type { FieldPath } from "react-hook-form";
 import React, { useMemo } from "react";
-import { useMutation } from "@tanstack/react-query";
+
 import { AnimatePresence, motion } from "motion/react";
-import { parseAsInteger, useQueryState } from "nuqs";
 
-import type { Step, userProfileFormSchemaType } from "@acme/validators";
-import { Button } from "@acme/ui/button";
-import { Form } from "@acme/ui/form";
-import { userProfileFormSchema } from "@acme/validators";
-
-import { usePersistedForm } from "~/app/hooks/usePersistenForm";
-import { useTRPC } from "~/trpc/react";
 import BasicInformationForm from "./_components/BasicInformationForm";
 import EducationStep from "./_components/EducationFrom";
 import ExperienceStep from "./_components/ExperienceForm";
 import InfoAside from "./_components/InfoAside";
 import SkillsStep from "./_components/SkillStep";
 import { Stepper } from "./_components/Steppper";
+import {
+  userProfileFormSchema,
+  type Step,
+  type userProfileFormSchemaType,
+} from "~/vlidators";
+import { usePersistedForm } from "~/hooks/usePersistenForm";
+import { Form } from "~/components/ui/form";
+import { Button } from "~/components/ui/button";
+import { useQueryState, parseAsInteger } from "nuqs";
 
 const steps: Step[] = [
   {
@@ -44,19 +45,6 @@ const steps: Step[] = [
 ];
 
 function JoinPage() {
-  const trpc = useTRPC();
-
-  const userProfileMutation = useMutation(
-    trpc.userProfile.create.mutationOptions({
-      onSuccess: (data) => {
-        console.log("User profile created:", data);
-      },
-      onError: (error) => {
-        console.error("Failed to create user profile:", error);
-      },
-    }),
-  );
-
   const [query, setQuery] = useQueryState("formStep", {
     defaultValue: "bio",
   });
@@ -85,7 +73,6 @@ function JoinPage() {
   );
 
   const goNext = async () => {
-    // @ts-expect-error stepfield type error
     const valid = await form.trigger(stepFields[current]);
     console.log(valid);
 
@@ -102,7 +89,7 @@ function JoinPage() {
 
   const onSubmit = (values: userProfileFormSchemaType) => {
     console.log("Join submission", values);
-    userProfileMutation.mutate(values);
+    // userProfileMutation.mutate(values);
   };
 
   return (
@@ -114,17 +101,17 @@ function JoinPage() {
           transition={{ duration: 0.4 }}
           className="mb-6"
         >
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+          <h1 className="text-foreground text-2xl font-semibold tracking-tight sm:text-3xl">
             Create your profile
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="text-muted-foreground mt-1 text-sm">
             Join the community, match with mentors, and showcase your journey.
           </p>
         </motion.div>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           <div className="md:col-span-2">
-            <div className="flex flex-col rounded border bg-card p-6 shadow-sm">
+            <div className="bg-card flex flex-col rounded border p-6 shadow-sm">
               <header className="mb-6">
                 {(() => {
                   const step: Step = steps[current] ?? {
@@ -135,23 +122,23 @@ function JoinPage() {
                   return (
                     <>
                       <div className="mb-4 flex items-center justify-between">
-                        <h1 className="text-xl font-semibold text-foreground">
+                        <h1 className="text-foreground text-xl font-semibold">
                           {step.title}
                         </h1>
-                        <span className="text-sm text-muted-foreground">
+                        <span className="text-muted-foreground text-sm">
                           Step {current + 1} of {steps.length}
                         </span>
                       </div>
-                      <p className="mb-4 text-sm text-muted-foreground">
+                      <p className="text-muted-foreground mb-4 text-sm">
                         {step.description}
                       </p>
                       <Stepper current={current} />
                     </>
                   );
                 })()}
-                <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+                <div className="bg-muted h-2 w-full overflow-hidden rounded-full">
                   <div
-                    className="h-full rounded-full bg-primary transition-all"
+                    className="bg-primary h-full rounded-full transition-all"
                     style={{ width: `${progress}%` }}
                   />
                 </div>

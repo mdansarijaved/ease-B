@@ -2,8 +2,12 @@ import "~/styles/globals.css";
 
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
-
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { TRPCReactProvider } from "~/trpc/react";
+import Header from "~/components/header";
+import Footer from "~/components/footer";
+import { cn } from "~/lib/utils";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -21,8 +25,25 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${geist.variable}`}>
-      <body>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+      <head>
+        <Script
+          crossOrigin="anonymous"
+          src="//unpkg.com/react-scan/dist/auto.global.js"
+        />
+      </head>
+      <body
+        className={cn(
+          "bg-background text-foreground mx-auto min-h-screen font-sans antialiased",
+          geist.variable,
+        )}
+      >
+        <TRPCReactProvider>
+          <NuqsAdapter>
+            <Header />
+            {children}
+            <Footer />
+          </NuqsAdapter>
+        </TRPCReactProvider>
       </body>
     </html>
   );
