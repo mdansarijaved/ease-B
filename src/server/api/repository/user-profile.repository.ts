@@ -23,7 +23,7 @@ export class UserProfileRepository {
       .from(userProfileTable)
       .where(eq(userProfileTable.id, userID));
 
-    return userprofile;
+    return userprofile[0];
   }
 
   async createUserProfile(userID: string, data: userProfileFormSchemaType) {

@@ -20,6 +20,9 @@ import { usePersistedForm } from "~/hooks/usePersistenForm";
 import { Form } from "~/components/ui/form";
 import { Button } from "~/components/ui/button";
 import { useQueryState, parseAsInteger } from "nuqs";
+import { api } from "~/trpc/react";
+import { authClient } from "~/auth/client";
+import { useRouter } from "next/navigation";
 
 const steps: Step[] = [
   {
@@ -45,9 +48,11 @@ const steps: Step[] = [
 ];
 
 function JoinPage() {
+  const userProfileMutation = api.userProfile.create.useMutation();
   const [query, setQuery] = useQueryState("formStep", {
     defaultValue: "bio",
   });
+  const router = useRouter();
   const [current, setCurrent] = useQueryState(
     "current",
     parseAsInteger.withDefault(0),
@@ -59,6 +64,20 @@ function JoinPage() {
     education: [],
     experience: [],
   });
+  const user = authClient.useSession();
+
+  const { data: userProfile } = api.userProfile.get.useQuery(
+    {
+      id: user.data?.user.id ?? "",
+    },
+    {
+      enabled: !!user.data?.user.id,
+    },
+  );
+
+  if (userProfile) {
+    router.push("/");
+  }
 
   const stepFields: FieldPath<userProfileFormSchemaType>[][] = [
     ["bio"],
@@ -89,7 +108,7 @@ function JoinPage() {
 
   const onSubmit = (values: userProfileFormSchemaType) => {
     console.log("Join submission", values);
-    // userProfileMutation.mutate(values);
+    userProfileMutation.mutate(values);
   };
 
   return (

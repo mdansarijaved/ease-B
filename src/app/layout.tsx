@@ -8,6 +8,7 @@ import Header from "~/components/header";
 import Footer from "~/components/footer";
 import { cn } from "~/lib/utils";
 import Script from "next/script";
+import { SidebarProvider } from "~/components/ui/sidebar";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -38,11 +39,9 @@ export default function RootLayout({
         )}
       >
         <TRPCReactProvider>
-          <NuqsAdapter>
-            <Header />
-            {children}
-            <Footer />
-          </NuqsAdapter>
+          <SidebarProvider>
+            <NuqsAdapter>{children}</NuqsAdapter>
+          </SidebarProvider>
         </TRPCReactProvider>
       </body>
     </html>

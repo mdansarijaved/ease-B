@@ -15,16 +15,6 @@ function Header() {
   console.log(user);
   const isLoggedIn = !!user.data?.user;
   const isNormalUser = user.data?.user.role === "user";
-  const userProfile = api.userProfile.get.useQuery({
-    id: user.data?.user.id ?? "",
-  });
-
-  let userHasProfile = true;
-  if (!userProfile.data) {
-    userHasProfile = false;
-  }
-
-  console.log(userHasProfile);
 
   const features = [
     {
