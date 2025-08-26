@@ -1,57 +1,58 @@
 "use client";
-import { Lora } from "next/font/google";
-import { Badge } from "~/components/ui/badge";
-import { Button } from "~/components/ui/button";
-import { cn } from "~/lib/utils";
 
-const playFair = Lora({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
+import { ArrowRight } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import { Button } from "~/components/ui/button";
 
 export function HeroSection() {
   return (
-    <main className="bg-primary relative min-h-screen w-full overflow-hidden py-16">
-      <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="h-full w-full bg-[linear-gradient(to_right,var(--grid-color)_1px,transparent_1px),linear-gradient(to_bottom,var(--grid-color)_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_at_center,white,transparent_70%)] bg-[size:40px_40px] [--grid-color:rgba(0,0,0,0.06)] dark:[--grid-color:rgba(255,255,255,0.06)]" />
+    <section className="bg-background relative w-full overflow-hidden py-32 md:py-48">
+      {/* Background decoration */}
+      <div className="absolute inset-0 -z-10">
+        <div className="bg-primary/10 absolute -top-48 left-1/2 h-[40rem] w-[40rem] -translate-x-1/2 rounded-full blur-3xl" />
+        <div className="bg-secondary/10 absolute right-1/2 -bottom-48 h-[40rem] w-[40rem] translate-x-1/2 rounded-full blur-3xl" />
       </div>
 
-      <div className="relative container mx-auto mt-20 grid h-full place-items-center">
-        <div className="z-10 flex h-full w-full flex-col justify-center gap-4 text-center">
-          <div className="flex items-center justify-center gap-2">
-            <Badge variant="transparent" className="bg-white">
-              <p>
-                <span className="text-primary-light">
-                  Start you career with the best mentor
-                </span>
-              </p>
-            </Badge>
-          </div>
-          <p
-            className={cn(
-              "text-primary-light mx-auto max-w-3xl text-5xl font-extralight",
-              playFair.className,
-            )}
-          >
-            Kickstart your career by joining the best mentor marketplace
-          </p>
-          <p
-            className={cn(
-              "text-primary-light mx-auto max-w-xl text-lg font-light",
-              playFair.className,
-            )}
-          >
+      <div className="relative z-10 container mx-auto text-center">
+        <div className="flex flex-col items-center gap-8">
+          <h1 className="text-foreground max-w-4xl text-5xl font-bold tracking-tighter md:text-7xl">
+            Kickstart Your Career with the Perfect Mentor
+          </h1>
+          <p className="text-muted-foreground max-w-2xl text-lg">
             Find the best mentor for your career and get the support you need to
-            succeed.
+            succeed in our thriving marketplace.
           </p>
-          <div className="flex items-center justify-center gap-4">
-            <Button variant={"secondary"} className="">
+          <div className="flex flex-col items-center gap-4 sm:flex-row">
+            <Button size="lg">
               Get Started
+              <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-            <Button variant="outline">Learn More</Button>
+            <Button size="lg" variant="link" className="text-muted-foreground">
+              Learn More
+            </Button>
+          </div>
+          <div className="mt-8 flex items-center justify-center">
+            <div className="flex -space-x-4">
+              <Avatar className="border-background h-12 w-12 border-2">
+                <AvatarImage src="https://github.com/shadcn.png" />
+                <AvatarFallback>M1</AvatarFallback>
+              </Avatar>
+              <Avatar className="border-background h-12 w-12 border-2">
+                <AvatarImage src="https://github.com/vercel.png" />
+                <AvatarFallback>M2</AvatarFallback>
+              </Avatar>
+              <Avatar className="border-background h-12 w-12 border-2">
+                <AvatarImage src="https://github.com/nextjs.png" />
+                <AvatarFallback>M3</AvatarFallback>
+              </Avatar>
+            </div>
+            <p className="text-muted-foreground ml-4 font-medium">
+              Join <span className="text-foreground font-bold">500+</span>{" "}
+              mentors worldwide.
+            </p>
           </div>
         </div>
       </div>
-    </main>
+    </section>
   );
 }
