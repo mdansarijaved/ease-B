@@ -1,15 +1,14 @@
 import React from "react";
 import { useFormContext } from "react-hook-form";
-
-import type { userProfileFormSchemaType } from "@acme/validators";
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from "@acme/ui/form";
-import { Textarea } from "@acme/ui/textarea";
+} from "~/components/ui/form";
+import { Textarea } from "~/components/ui/textarea";
+import type { userProfileFormSchemaType } from "~/vlidators";
 
 function BasicInformationForm() {
   const form = useFormContext<userProfileFormSchemaType>();

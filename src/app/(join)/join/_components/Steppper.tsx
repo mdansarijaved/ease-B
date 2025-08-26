@@ -1,7 +1,7 @@
 import { Briefcase, GraduationCap, PenTool, UserCog } from "lucide-react";
 
-import type { Step } from "@acme/validators";
-import { cn } from "@acme/ui";
+import type { Step } from "~/vlidators";
+import { cn } from "~/lib/utils";
 
 export function Stepper(props: { current: number }) {
   const items: { key: Step["key"]; label: string; icon: React.ReactNode }[] = [

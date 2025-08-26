@@ -1,24 +1,23 @@
-import { useFormContext } from "react-hook-form";
+import { useFieldArray, useFormContext } from "react-hook-form";
 
-import type { userProfileFormSchemaType } from "@acme/validators";
-import { Button } from "@acme/ui/button";
+import type { userProfileFormSchemaType } from "~/vlidators";
+import { Button } from "~/components/ui/button";
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  useFieldArray,
-} from "@acme/ui/form";
-import { Input } from "@acme/ui/input";
+} from "~/components/ui/form";
+import { Input } from "~/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@acme/ui/select";
-import { Textarea } from "@acme/ui/textarea";
+} from "~/components/ui/select";
+import { Textarea } from "~/components/ui/textarea";
 
 export default function SkillsStep() {
   const form = useFormContext<userProfileFormSchemaType>();
@@ -34,7 +33,7 @@ export default function SkillsStep() {
       <div className="mb-3 flex items-center justify-between">
         <div>
           <div className="text-sm font-medium">Add skills</div>
-          <div className="text-xs text-muted-foreground">Skills</div>
+          <div className="text-muted-foreground text-xs">Skills</div>
         </div>
         <Button
           type="button"
@@ -55,7 +54,7 @@ export default function SkillsStep() {
 
       <div className="space-y-4">
         {fields.length === 0 && (
-          <div className="rounded-md border border-dashed p-4 text-sm text-muted-foreground">
+          <div className="text-muted-foreground rounded-md border border-dashed p-4 text-sm">
             No education added yet.
           </div>
         )}

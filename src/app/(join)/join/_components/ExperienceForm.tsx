@@ -1,23 +1,26 @@
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { useFormContext } from "react-hook-form";
+import { useFieldArray, useFormContext } from "react-hook-form";
 
-import type { userProfileFormSchemaType } from "@acme/validators";
-import { cn } from "@acme/ui";
-import { Button } from "@acme/ui/button";
-import { Calendar } from "@acme/ui/calendar";
-import { Checkbox } from "@acme/ui/checkbox";
+import type { userProfileFormSchemaType } from "~/vlidators";
+import { cn } from "~/lib/utils";
+import { Button } from "~/components/ui/button";
+import { Calendar } from "~/components/ui/calendar";
+import { Checkbox } from "~/components/ui/checkbox";
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  useFieldArray,
-} from "@acme/ui/form";
-import { Input } from "@acme/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@acme/ui/popover";
-import { Textarea } from "@acme/ui/textarea";
+} from "~/components/ui/form";
+import { Input } from "~/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "~/components/ui/popover";
+import { Textarea } from "~/components/ui/textarea";
 
 export default function ExperienceForm() {
   const form = useFormContext<userProfileFormSchemaType>();
@@ -31,7 +34,7 @@ export default function ExperienceForm() {
       <div className="mb-3 flex items-center justify-between">
         <div>
           <div className="text-sm font-medium">Add experience</div>
-          <div className="text-xs text-muted-foreground">Jobs</div>
+          <div className="text-muted-foreground text-xs">Jobs</div>
         </div>
         <Button
           type="button"
@@ -53,7 +56,7 @@ export default function ExperienceForm() {
 
       <div className="space-y-4">
         {fields.length === 0 && (
-          <div className="rounded-md border border-dashed p-4 text-sm text-muted-foreground">
+          <div className="text-muted-foreground rounded-md border border-dashed p-4 text-sm">
             No education added yet.
           </div>
         )}
