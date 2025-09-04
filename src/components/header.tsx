@@ -76,7 +76,9 @@ function Header() {
             </div>
             <div className="text-center">
               <Link href="/">
-                <h1 className="text-2xl font-bold text-neutral-700">Butter.</h1>
+                <h1 className="text-2xl font-bold text-neutral-700">
+                  EasyWisy.
+                </h1>
               </Link>
             </div>
             <div className="flex items-center justify-end gap-2">

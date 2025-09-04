@@ -3,18 +3,41 @@
 import { ArrowRight } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
+import { motion } from "motion/react";
 
 export function HeroSection() {
   return (
-    <section className="bg-background relative w-full overflow-hidden py-32 md:py-48">
-      {/* Background decoration */}
-      <div className="absolute inset-0 -z-10">
+    <motion.section
+      initial="hidden"
+      animate="show"
+      viewport={{ once: true }}
+      variants={{
+        hidden: {},
+        show: {
+          transition: {
+            staggerChildren: 0.15,
+          },
+        },
+      }}
+      className="bg-background relative w-full overflow-hidden py-32 md:py-48"
+    >
+      <div className="absolute inset-0 z-10">
         <div className="bg-primary/10 absolute -top-48 left-1/2 h-[40rem] w-[40rem] -translate-x-1/2 rounded-full blur-3xl" />
         <div className="bg-secondary/10 absolute right-1/2 -bottom-48 h-[40rem] w-[40rem] translate-x-1/2 rounded-full blur-3xl" />
       </div>
 
       <div className="relative z-10 container mx-auto text-center">
-        <div className="flex flex-col items-center gap-8">
+        <motion.div
+          variants={{
+            hidden: { opacity: 0, y: 10 },
+            show: {
+              opacity: 1,
+              y: 0,
+              transition: { type: "spring", stiffness: 100 },
+            },
+          }}
+          className="flex flex-col items-center gap-8"
+        >
           <h1 className="text-foreground max-w-4xl text-5xl font-bold tracking-tighter md:text-7xl">
             Kickstart Your Career with the Perfect Mentor
           </h1>
@@ -31,28 +54,38 @@ export function HeroSection() {
               Learn More
             </Button>
           </div>
-          <div className="mt-8 flex items-center justify-center">
-            <div className="flex -space-x-4">
-              <Avatar className="border-background h-12 w-12 border-2">
-                <AvatarImage src="https://github.com/shadcn.png" />
-                <AvatarFallback>M1</AvatarFallback>
-              </Avatar>
-              <Avatar className="border-background h-12 w-12 border-2">
-                <AvatarImage src="https://github.com/vercel.png" />
-                <AvatarFallback>M2</AvatarFallback>
-              </Avatar>
-              <Avatar className="border-background h-12 w-12 border-2">
-                <AvatarImage src="https://github.com/nextjs.png" />
-                <AvatarFallback>M3</AvatarFallback>
-              </Avatar>
-            </div>
-            <p className="text-muted-foreground ml-4 font-medium">
-              Join <span className="text-foreground font-bold">500+</span>{" "}
-              mentors worldwide.
-            </p>
+        </motion.div>
+        <motion.div
+          variants={{
+            hidden: { opacity: 0, y: 10 },
+            show: {
+              opacity: 1,
+              y: 0,
+              transition: { type: "spring", stiffness: 100 },
+            },
+          }}
+          className="mt-8 flex items-center justify-center"
+        >
+          <div className="flex -space-x-4">
+            <Avatar className="border-background h-12 w-12 border-2">
+              <AvatarImage src="https://github.com/shadcn.png" />
+              <AvatarFallback>M1</AvatarFallback>
+            </Avatar>
+            <Avatar className="border-background h-12 w-12 border-2">
+              <AvatarImage src="https://github.com/vercel.png" />
+              <AvatarFallback>M2</AvatarFallback>
+            </Avatar>
+            <Avatar className="border-background h-12 w-12 border-2">
+              <AvatarImage src="https://github.com/nextjs.png" />
+              <AvatarFallback>M3</AvatarFallback>
+            </Avatar>
           </div>
-        </div>
+          <p className="text-muted-foreground ml-4 font-medium">
+            Join <span className="text-foreground font-bold">500+</span> mentors
+            worldwide.
+          </p>
+        </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 }

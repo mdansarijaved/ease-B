@@ -44,7 +44,7 @@ export default function Footer({ className }: FooterProps) {
       >
         <div className="grid gap-8 py-10 md:grid-cols-12">
           <div className="md:col-span-4">
-            <div className="text-primary text-2xl font-bold">Butter.</div>
+            <div className="text-primary text-2xl font-bold">EasyWisy.</div>
             <p className="text-muted-foreground mt-2 text-sm">
               Built for teams of today, like yours. Learn, mentor, and grow in
               one place.

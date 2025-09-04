@@ -39,7 +39,7 @@ const experts = [
 
 export function ExpertsSection() {
   return (
-    <section className="min-h-screen w-full bg-[#fdfcf7] py-16">
+    <section className="min-h-screen w-full py-16">
       <div className="container mx-auto mt-20 grid h-full place-items-center">
         <div className="z-10 flex h-full w-full flex-col items-center justify-center gap-8 text-center">
           <h1 className="max-w-3xl text-7xl font-bold text-gray-800">
