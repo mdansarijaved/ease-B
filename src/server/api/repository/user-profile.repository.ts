@@ -21,7 +21,7 @@ export class UserProfileRepository {
     const userprofile = await this.db
       .select()
       .from(userProfileTable)
-      .where(eq(userProfileTable.id, userID));
+      .where(eq(userProfileTable.userId, userID));
 
     return userprofile[0];
   }

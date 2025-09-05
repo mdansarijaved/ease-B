@@ -70,8 +70,8 @@ function Header() {
                   </motion.div>
                 </Button>
               </div>
-              <Link href="/about" className="flex items-center gap-2">
-                About
+              <Link href="/commmunity" className="flex items-center gap-2">
+                Community
               </Link>
             </div>
             <div className="text-center">

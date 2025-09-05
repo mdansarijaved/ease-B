@@ -3,6 +3,7 @@ import { index, pgTable, primaryKey } from "drizzle-orm/pg-core";
 import { user } from "./auth-schema";
 import { timestamps } from "./column.helper";
 import { skills, userProfileTable } from "./user-profile-scehma";
+import { relations } from "drizzle-orm";
 
 export const mentorTable = pgTable("mentor", (t) => ({
   id: t.uuid("id").primaryKey().defaultRandom(),
@@ -17,6 +18,14 @@ export const mentorTable = pgTable("mentor", (t) => ({
   totalSessions: t.integer("total_sessions").notNull().default(0),
   introduction: t.text("introduction"),
   ...timestamps,
+}));
+
+export const mentorRelations = relations(mentorTable, ({ many }) => ({
+  mentorService: many(mentorService),
+  mentorAvailability: many(mentorAvailability),
+  mentorTimeSlot: many(mentorTimeSlot),
+  booking: many(booking),
+  mentorPayout: many(mentorPayout),
 }));
 
 export const serviceCategory = pgTable("service_category", (t) => ({
@@ -55,6 +64,10 @@ export const mentorService = pgTable("mentor_service", (t) => ({
     .notNull()
     .default("moderate"),
   ...timestamps,
+}));
+
+export const mentorServiceRelations = relations(mentorService, ({ many }) => ({
+  mentorTimeSlot: many(mentorTimeSlot),
 }));
 
 export const mentorAvailability = pgTable(

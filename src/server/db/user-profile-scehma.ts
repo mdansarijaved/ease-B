@@ -21,6 +21,7 @@ export const userProfileRelations = relations(userProfileTable, ({ many }) => ({
   userEducation: many(userEducation),
   userWorkHistory: many(userWorkHistory),
 }));
+
 export const skills = pgTable("skills", (t) => ({
   id: t.uuid("id").primaryKey().defaultRandom(),
   name: t.text("name").notNull().unique(),

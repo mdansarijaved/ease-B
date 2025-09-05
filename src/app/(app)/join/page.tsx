@@ -48,11 +48,21 @@ const steps: Step[] = [
 ];
 
 function JoinPage() {
+  const router = useRouter();
+  const user = authClient.useSession();
+  const { data: userProfile } = api.userProfile.get.useQuery(
+    {
+      id: user.data?.user.id ?? "",
+    },
+    {
+      enabled: !!user.data?.user.id,
+    },
+  );
+
   const userProfileMutation = api.userProfile.create.useMutation();
   const [query, setQuery] = useQueryState("formStep", {
     defaultValue: "bio",
   });
-  const router = useRouter();
   const [current, setCurrent] = useQueryState(
     "current",
     parseAsInteger.withDefault(0),
@@ -64,20 +74,6 @@ function JoinPage() {
     education: [],
     experience: [],
   });
-  const user = authClient.useSession();
-
-  const { data: userProfile } = api.userProfile.get.useQuery(
-    {
-      id: user.data?.user.id ?? "",
-    },
-    {
-      enabled: !!user.data?.user.id,
-    },
-  );
-
-  if (userProfile) {
-    router.push("/");
-  }
 
   const stepFields: FieldPath<userProfileFormSchemaType>[][] = [
     ["bio"],
@@ -90,6 +86,10 @@ function JoinPage() {
     () => ((current + 1) / steps.length) * 100,
     [current],
   );
+  if (userProfile) {
+    router.push("/");
+    return;
+  }
 
   const goNext = async () => {
     const valid = await form.trigger(stepFields[current]);
