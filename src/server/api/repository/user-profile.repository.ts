@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 
-import type { db as Database } from "~/server/db/client";
+import { db, type db as Database } from "~/server/db/client";
 import {
   skills,
   userEducation,
@@ -18,7 +18,7 @@ export class UserProfileRepository {
   }
 
   async getUserPublicProfile(userID: string) {
-    const userprofile = await this.db
+    const userprofile = await db
       .select()
       .from(userProfileTable)
       .where(eq(userProfileTable.userId, userID));

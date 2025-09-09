@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronDownIcon, MoveRight } from "lucide-react";
@@ -8,14 +8,11 @@ import { AnimatePresence, motion } from "motion/react";
 import { authClient } from "~/auth/client";
 import { Button } from "./ui/button";
 import { api } from "~/trpc/react";
+import HeaderButtons from "./headerButton";
 
 function Header() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const user = authClient.useSession();
-  console.log(user);
-  const isLoggedIn = !!user.data?.user;
-  const isNormalUser = user.data?.user.role === "user";
-
   const features = [
     {
       name: "Explore Mentors",
@@ -82,24 +79,7 @@ function Header() {
               </Link>
             </div>
             <div className="flex items-center justify-end gap-2">
-              {isLoggedIn && !isNormalUser ? (
-                <Button>
-                  <Link href="/profile">Profile</Link>
-                </Button>
-              ) : isNormalUser ? (
-                <Button>
-                  <Link href="/join">Join Us</Link>
-                </Button>
-              ) : (
-                <>
-                  <Link href="/auth/login">
-                    <Button variant="outline">Login</Button>
-                  </Link>
-                  <Link href="/auth/signup">
-                    <Button variant="outline">Signup</Button>
-                  </Link>
-                </>
-              )}
+              <HeaderButtons userId={user.data?.user.id ?? ""} />
             </div>
           </div>
           <AnimatePresence>

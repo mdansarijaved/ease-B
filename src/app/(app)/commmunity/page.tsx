@@ -3,6 +3,7 @@ import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
 import { Button } from "~/components/ui/button";
 import Image from "next/image";
 import { Card, CardContent, CardHeader } from "~/components/ui/card";
+import { Users } from "lucide-react";
 const communityCourse = [
   {
     name: "AI & Machine Learning",
@@ -174,8 +175,11 @@ const CommunityCard = ({
       </CardHeader>
       <CardContent className="px-3">
         <h3 className="text-lg font-semibold">{community.name}</h3>
-        <p className="text-muted-foreground text-sm">{community.description}</p>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-muted-foreground line-clamp-1 text-sm">
+          {community.description}
+        </p>
+        <p className="text-muted-foreground flex items-center gap-2 text-xs">
+          <Users className="text-primary h-3 w-3" strokeWidth={3} />
           {community.totalMembers} members
         </p>
         <Button variant="default" className="mt-2 w-full">
