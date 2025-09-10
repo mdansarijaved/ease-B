@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import type { db as Database } from "~/server/db/client";
 import {
   skills,
+  user,
   userEducation,
   userProfileTable,
   userProfileToSkills,
@@ -37,6 +38,26 @@ export class UserProfileRepository {
     }
 
     const userprofile = await this.db.transaction(async (tx) => {
+      const [currentUser] = await tx
+        .select({ role: user.role })
+        .from(user)
+        .where(eq(user.id, userID));
+
+      if (!currentUser) {
+        tx.rollback();
+        throw new Error("User not found");
+      }
+
+      // Only update role if it's different
+      if (currentUser.role !== data.role) {
+        await tx
+          .update(user)
+          .set({
+            role: data.role,
+          })
+          .where(eq(user.id, userID));
+      }
+
       const [newProfile] = await tx
         .insert(userProfileTable)
         .values({

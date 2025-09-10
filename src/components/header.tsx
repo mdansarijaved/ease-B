@@ -1,19 +1,18 @@
 "use client";
 
-import React, { Suspense, useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronDownIcon, MoveRight } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { authClient } from "~/auth/client";
 import { Button } from "./ui/button";
-import { api } from "~/trpc/react";
+
 import HeaderButtons from "./headerButton";
-import type { UrlObject } from "url";
 
 function Header() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const { data: user, isPending: isSessionLoading } = authClient.useSession();
+
   const features = [
     {
       name: "Explore Mentors",
@@ -27,7 +26,7 @@ function Header() {
     },
     {
       name: "Explore Communities",
-      href: "/",
+      href: "/community",
       description: "Find the perfect community for you",
     },
     {
@@ -68,7 +67,7 @@ function Header() {
                   </motion.div>
                 </Button>
               </div>
-              <Link href="/commmunity" className="flex items-center gap-2">
+              <Link href="/community" className="flex items-center gap-2">
                 Community
               </Link>
             </div>
@@ -80,10 +79,7 @@ function Header() {
               </Link>
             </div>
             <div className="flex items-center justify-end gap-2">
-              <HeaderButtons
-                userId={user?.user.id ?? ""}
-                isSessionLoading={isSessionLoading}
-              />
+              <HeaderButtons />
             </div>
           </div>
           <AnimatePresence>

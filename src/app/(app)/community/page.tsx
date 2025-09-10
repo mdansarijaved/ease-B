@@ -4,11 +4,13 @@ import { Button } from "~/components/ui/button";
 import Image from "next/image";
 import { Card, CardContent, CardHeader } from "~/components/ui/card";
 import { Users } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 const communityCourse = [
   {
     name: "AI & Machine Learning",
     type: "Career",
     image: "/community.jpg",
+    author: "John Doe",
     description: "AI & Machine Learning",
     totalMembers: 100,
   },
@@ -16,6 +18,7 @@ const communityCourse = [
     name: "Blockchain",
     type: "Career",
     image: "/community.jpg",
+    author: "John Doe",
     description: "Blockchain",
     totalMembers: 100,
   },
@@ -23,6 +26,7 @@ const communityCourse = [
     name: "Data Science",
     type: "Career",
     image: "/community.jpg",
+    author: "John Doe",
     description: "Data Science",
     totalMembers: 100,
   },
@@ -30,6 +34,7 @@ const communityCourse = [
     name: "DevOps",
     type: "Career",
     image: "/community.jpg",
+    author: "John Doe",
     description: "DevOps",
     totalMembers: 100,
   },
@@ -37,6 +42,7 @@ const communityCourse = [
     name: "Frontend Development",
     type: "Career",
     image: "/community.jpg",
+    author: "John Doe",
     description: "Frontend Development",
     totalMembers: 100,
   },
@@ -44,6 +50,7 @@ const communityCourse = [
     name: "Full Stack Development",
     type: "Career",
     image: "/community.jpg",
+    author: "John Doe",
     description: "Full Stack Development",
     totalMembers: 100,
   },
@@ -51,6 +58,7 @@ const communityCourse = [
     name: "Backend Development",
     type: "Career",
     image: "/community.jpg",
+    author: "John Doe",
     description: "Backend Development",
     totalMembers: 100,
   },
@@ -58,6 +66,7 @@ const communityCourse = [
     name: "Mobile Development",
     type: "Career",
     image: "/community.jpg",
+    author: "John Doe",
     description: "Mobile Development",
     totalMembers: 100,
   },
@@ -65,6 +74,7 @@ const communityCourse = [
     name: "Product Management",
     type: "Career",
     image: "/community.jpg",
+    author: "John Doe",
     description: "Product Management",
     totalMembers: 100,
   },
@@ -72,6 +82,7 @@ const communityCourse = [
     name: "Project Management",
     type: "Career",
     image: "/community.jpg",
+    author: "John Doe",
     description: "Project Management",
     totalMembers: 100,
   },
@@ -79,6 +90,7 @@ const communityCourse = [
     name: "Sales",
     type: "Career",
     image: "/community.jpg",
+    author: "John Doe",
     description: "Sales",
     totalMembers: 100,
   },
@@ -86,6 +98,7 @@ const communityCourse = [
     name: "Supply Chain",
     type: "Career",
     image: "/community.jpg",
+    author: "John Doe",
     description: "Supply Chain",
     totalMembers: 100,
   },
@@ -93,6 +106,7 @@ const communityCourse = [
     name: "UI/UX Design",
     type: "Career",
     image: "/community.jpg",
+    author: "john doe",
     description: "UI/UX Design",
     totalMembers: 100,
   },
@@ -100,6 +114,7 @@ const communityCourse = [
     name: "Web Development",
     type: "Career",
     image: "/community.jpg",
+    author: "John Doe",
     description: "Web Development",
     totalMembers: 100,
   },
@@ -107,6 +122,7 @@ const communityCourse = [
     name: "Others",
     type: "Career",
     image: "/community.jpg",
+    author: "John Doe",
     description: "Others",
     totalMembers: 100,
   },
@@ -178,6 +194,7 @@ const CommunityCard = ({
         <p className="text-muted-foreground line-clamp-1 text-sm">
           {community.description}
         </p>
+        <p className="text-muted-foreground text-xs">by. {community.author}</p>
         <p className="text-muted-foreground flex items-center gap-2 text-xs">
           <Users className="text-primary h-3 w-3" strokeWidth={3} />
           {community.totalMembers} members

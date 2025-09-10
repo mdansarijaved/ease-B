@@ -8,7 +8,6 @@ export const db = drizzle({
   }),
   schema,
   logger: true,
-  casing: "snake_case",
 });
 
 export type Database = typeof db;

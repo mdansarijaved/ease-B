@@ -7,6 +7,10 @@ export const user = pgTable("user", (t) => ({
   name: t.text().notNull(),
   email: t.text().notNull().unique(),
   emailVerified: t.boolean().notNull(),
+  role: t
+    .text("role", { enum: ["student", "mentor"] })
+    .notNull()
+    .default("student"),
   image: t.text(),
   isAdmin: t.boolean().notNull().default(false),
   createdAt: t.timestamp().notNull(),

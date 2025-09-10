@@ -23,12 +23,19 @@ import { useQueryState, parseAsInteger } from "nuqs";
 import { api } from "~/trpc/react";
 import { authClient } from "~/auth/client";
 import { useRouter } from "next/navigation";
+import RoleStep from "./_components/RoleStep";
 
 const steps: Step[] = [
   {
+    key: "role",
+    title: "Choose your role",
+    description: "Choose your role",
+  },
+
+  {
     key: "bio",
     title: "Who are you?",
-    description: "Choose your role",
+    description: "Tell us about yourself",
   },
   {
     key: "skills",
@@ -59,7 +66,7 @@ function JoinPage() {
 
   const userProfileMutation = api.userProfile.create.useMutation();
   const [query, setQuery] = useQueryState("formStep", {
-    defaultValue: "bio",
+    defaultValue: "role",
   });
   const [current, setCurrent] = useQueryState(
     "current",
@@ -67,6 +74,7 @@ function JoinPage() {
   );
 
   const form = usePersistedForm("userProfileForm", userProfileFormSchema, {
+    role: "student",
     bio: "",
     skills: [],
     education: [],
@@ -74,6 +82,7 @@ function JoinPage() {
   });
 
   const stepFields: FieldPath<userProfileFormSchemaType>[][] = [
+    ["role"],
     ["bio"],
     ["skills"],
     ["education"],
@@ -84,10 +93,6 @@ function JoinPage() {
     () => ((current + 1) / steps.length) * 100,
     [current],
   );
-  if (userProfile) {
-    router.push("/");
-    return;
-  }
 
   const goNext = async () => {
     const valid = await form.trigger(stepFields[current]);
@@ -132,8 +137,8 @@ function JoinPage() {
               <header className="mb-6">
                 {(() => {
                   const step: Step = steps[current] ?? {
-                    key: "bio",
-                    title: "Who are you?",
+                    key: "role",
+                    title: "Choose your role",
                     description: "Choose your role",
                   };
                   return (
@@ -174,6 +179,7 @@ function JoinPage() {
                       exit={{ opacity: 0, y: -8 }}
                       transition={{ duration: 0.2 }}
                     >
+                      {query === "role" && <RoleStep />}
                       {query === "bio" && <BasicInformationForm />}
                       {query === "skills" && <SkillsStep />}
                       {query === "education" && <EducationStep />}

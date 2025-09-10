@@ -3,14 +3,20 @@ import { api } from "~/trpc/react";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { Skeleton } from "./ui/skeleton";
+import { authClient } from "~/auth/client";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
-function HeaderButtons({
-  userId,
-  isSessionLoading,
-}: {
-  userId: string;
-  isSessionLoading: boolean;
-}) {
+function HeaderButtons() {
+  const { data: user, isPending: isSessionLoading } = authClient.useSession();
+  const userId = user?.user.id;
   const { data: userProfile, isLoading } = api.userProfile.get.useQuery(
     {},
     {
@@ -51,9 +57,25 @@ function HeaderButtons({
 
   return (
     <div className="flex items-center gap-2">
-      <Link href="/profile">
-        <Button variant="outline">Profile</Button>
-      </Link>
+      <DropdownMenu>
+        <DropdownMenuTrigger>
+          <Avatar>
+            <AvatarImage src={user.user.image ?? ""} />
+            <AvatarFallback>{user.user.name.charAt(0)}</AvatarFallback>
+          </Avatar>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>
+            <Link href={"/"}>Profile</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem hidden={user.user.role !== "Mentor"}>
+            <Link href={"/dashboard/mentor"}>Dashboard</Link>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
       {!userProfile?.id && (
         <Link href="/join">
           <Button>Join Us</Button>

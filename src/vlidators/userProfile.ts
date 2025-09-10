@@ -1,7 +1,7 @@
 import { z } from "zod/v4";
 
 export interface Step {
-  key: "bio" | "skills" | "education" | "experience";
+  key: "role" | "bio" | "skills" | "education" | "experience";
   title: string;
   description: string;
 }
@@ -63,6 +63,7 @@ export const experienceSchema = z
   );
 
 export const userProfileFormSchema = z.object({
+  role: z.enum(["student", "mentor"]),
   bio: z.string().min(100).max(2000),
   skills: userSkillSchema.array().min(1).max(10),
   education: educationSchema.array().min(1).max(10),
