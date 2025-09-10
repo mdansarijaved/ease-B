@@ -9,34 +9,35 @@ import { authClient } from "~/auth/client";
 import { Button } from "./ui/button";
 import { api } from "~/trpc/react";
 import HeaderButtons from "./headerButton";
+import type { UrlObject } from "url";
 
 function Header() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const user = authClient.useSession();
+  const { data: user, isPending: isSessionLoading } = authClient.useSession();
   const features = [
     {
       name: "Explore Mentors",
-      href: "/mentors",
+      href: "/",
       description: "Find the perfect mentor for you",
     },
     {
       name: "Explore Courses",
-      href: "/courses",
+      href: "/",
       description: "Find the perfect course for you",
     },
     {
       name: "Explore Communities",
-      href: "/communities",
+      href: "/",
       description: "Find the perfect community for you",
     },
     {
       name: "Explore Jobs",
-      href: "/jobs",
+      href: "/",
       description: "Find the perfect job for you",
     },
     {
       name: "Explore Events",
-      href: "/events",
+      href: "/",
       description: "Find the perfect event for you",
     },
   ];
@@ -79,7 +80,10 @@ function Header() {
               </Link>
             </div>
             <div className="flex items-center justify-end gap-2">
-              <HeaderButtons userId={user.data?.user.id ?? ""} />
+              <HeaderButtons
+                userId={user?.user.id ?? ""}
+                isSessionLoading={isSessionLoading}
+              />
             </div>
           </div>
           <AnimatePresence>
@@ -98,6 +102,7 @@ function Header() {
                     {features.map((feature) => (
                       <Link
                         key={feature.name}
+                        // @ts-expect-error url type
                         href={feature.href}
                         className="group flex items-center justify-between rounded-lg p-3 transition-colors hover:bg-gray-50"
                       >
@@ -123,7 +128,7 @@ function Header() {
                     />
 
                     <Button variant="outline" className="w-full">
-                      <Link href="/mentors/new">Become a Mentor</Link>
+                      <Link href="/join">Become a Mentor</Link>
                     </Button>
                   </div>
                 </div>

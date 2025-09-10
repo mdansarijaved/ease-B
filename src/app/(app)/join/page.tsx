@@ -51,9 +51,7 @@ function JoinPage() {
   const router = useRouter();
   const user = authClient.useSession();
   const { data: userProfile } = api.userProfile.get.useQuery(
-    {
-      id: user.data?.user.id ?? "",
-    },
+    {},
     {
       enabled: !!user.data?.user.id,
     },

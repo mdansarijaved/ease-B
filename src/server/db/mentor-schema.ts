@@ -20,14 +20,6 @@ export const mentorTable = pgTable("mentor", (t) => ({
   ...timestamps,
 }));
 
-export const mentorRelations = relations(mentorTable, ({ many }) => ({
-  mentorService: many(mentorService),
-  mentorAvailability: many(mentorAvailability),
-  mentorTimeSlot: many(mentorTimeSlot),
-  booking: many(booking),
-  mentorPayout: many(mentorPayout),
-}));
-
 export const serviceCategory = pgTable("service_category", (t) => ({
   id: t.uuid("id").primaryKey().defaultRandom(),
   name: t.text("name").notNull().unique(),
@@ -64,10 +56,6 @@ export const mentorService = pgTable("mentor_service", (t) => ({
     .notNull()
     .default("moderate"),
   ...timestamps,
-}));
-
-export const mentorServiceRelations = relations(mentorService, ({ many }) => ({
-  mentorTimeSlot: many(mentorTimeSlot),
 }));
 
 export const mentorAvailability = pgTable(
@@ -257,3 +245,121 @@ export const mentorToSkills = pgTable(
   }),
   (t) => [primaryKey({ columns: [t.mentorId, t.skillId] })],
 );
+
+export const mentorRelations = relations(mentorTable, ({ one, many }) => ({
+  userProfile: one(userProfileTable, {
+    fields: [mentorTable.userProfileId],
+    references: [userProfileTable.id],
+  }),
+  mentorService: many(mentorService),
+  mentorAvailability: many(mentorAvailability),
+  mentorTimeSlot: many(mentorTimeSlot),
+  booking: many(booking),
+  mentorPayout: many(mentorPayout),
+  mentorReview: many(mentorReview),
+  mentorToSkills: many(mentorToSkills),
+}));
+
+export const serviceCategoryRelations = relations(
+  serviceCategory,
+  ({ many }) => ({
+    mentorService: many(mentorService),
+  }),
+);
+
+export const mentorServiceRelations = relations(
+  mentorService,
+  ({ one, many }) => ({
+    mentor: one(mentorTable, {
+      fields: [mentorService.mentorId],
+      references: [mentorTable.id],
+    }),
+    category: one(serviceCategory, {
+      fields: [mentorService.categoryId],
+      references: [serviceCategory.id],
+    }),
+    mentorTimeSlot: many(mentorTimeSlot),
+    booking: many(booking),
+  }),
+);
+
+export const mentorAvailabilityRelations = relations(
+  mentorAvailability,
+  ({ one }) => ({
+    mentor: one(mentorTable, {
+      fields: [mentorAvailability.mentorId],
+      references: [mentorTable.id],
+    }),
+  }),
+);
+
+export const mentorTimeSlotRelations = relations(
+  mentorTimeSlot,
+  ({ one, many }) => ({
+    mentor: one(mentorTable, {
+      fields: [mentorTimeSlot.mentorId],
+      references: [mentorTable.id],
+    }),
+    service: one(mentorService, {
+      fields: [mentorTimeSlot.serviceId],
+      references: [mentorService.id],
+    }),
+    booking: many(booking),
+  }),
+);
+
+export const bookingRelations = relations(booking, ({ one }) => ({
+  student: one(user, {
+    fields: [booking.studentId],
+    references: [user.id],
+  }),
+  mentor: one(mentorTable, {
+    fields: [booking.mentorId],
+    references: [mentorTable.id],
+  }),
+  service: one(mentorService, {
+    fields: [booking.serviceId],
+    references: [mentorService.id],
+  }),
+  timeSlot: one(mentorTimeSlot, {
+    fields: [booking.timeSlotId],
+    references: [mentorTimeSlot.id],
+  }),
+  review: one(mentorReview, {
+    fields: [booking.id],
+    references: [mentorReview.bookingId],
+  }),
+}));
+
+export const mentorPayoutRelations = relations(mentorPayout, ({ one }) => ({
+  mentor: one(mentorTable, {
+    fields: [mentorPayout.mentorId],
+    references: [mentorTable.id],
+  }),
+}));
+
+export const mentorReviewRelations = relations(mentorReview, ({ one }) => ({
+  booking: one(booking, {
+    fields: [mentorReview.bookingId],
+    references: [booking.id],
+  }),
+  student: one(user, {
+    fields: [mentorReview.studentId],
+    references: [user.id],
+  }),
+  mentor: one(mentorTable, {
+    fields: [mentorReview.mentorId],
+    references: [mentorTable.id],
+  }),
+}));
+
+export const mentorToSkillsRelations = relations(mentorToSkills, ({ one }) => ({
+  mentor: one(mentorTable, {
+    fields: [mentorToSkills.mentorId],
+    references: [mentorTable.id],
+  }),
+  skill: one(skills, {
+    fields: [mentorToSkills.skillId],
+    references: [skills.id],
+  }),
+}));

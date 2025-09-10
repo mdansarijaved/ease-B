@@ -1,4 +1,6 @@
+import { relations } from "drizzle-orm";
 import { pgTable } from "drizzle-orm/pg-core";
+import { communityTable, userToCommunitesMapping } from "./communtiy.schema";
 
 export const user = pgTable("user", (t) => ({
   id: t.text().primaryKey(),
@@ -51,4 +53,9 @@ export const verification = pgTable("verification", (t) => ({
   expiresAt: t.timestamp().notNull(),
   createdAt: t.timestamp(),
   updatedAt: t.timestamp(),
+}));
+
+export const userRelation = relations(user, ({ one, many }) => ({
+  community: many(communityTable, { relationName: "communities_owner" }),
+  member: many(userToCommunitesMapping),
 }));

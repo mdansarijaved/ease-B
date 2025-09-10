@@ -136,8 +136,8 @@ function CommunityPage() {
 
   return (
     <div>
-      <div className="mx-auto w-full py-4">
-        <ScrollArea className="mx-auto w-[1000px] whitespace-nowrap">
+      <div className="container mx-auto w-full py-4">
+        <ScrollArea className="mx-auto w-[1200px] whitespace-nowrap">
           <div className="flex w-max gap-2">
             {communityTypes.map((type) => (
               <Button key={type} variant="outline">
@@ -148,7 +148,7 @@ function CommunityPage() {
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
       </div>
-      <div className="mx-auto grid w-full max-w-[1000px] grid-cols-3 gap-4">
+      <div className="container mx-auto grid w-full grid-cols-4 gap-4 py-10">
         {communityCourse.map((community) => (
           <CommunityCard key={community.name} community={community} />
         ))}
