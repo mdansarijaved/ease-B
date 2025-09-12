@@ -16,11 +16,18 @@ export const userProfileTable = pgTable("user_profile", (t) => ({
   ...timestamps,
 }));
 
-export const userProfileRelations = relations(userProfileTable, ({ many }) => ({
-  userProfileToSkills: many(userProfileToSkills),
-  userEducation: many(userEducation),
-  userWorkHistory: many(userWorkHistory),
-}));
+export const userProfileRelations = relations(
+  userProfileTable,
+  ({ one, many }) => ({
+    user: one(user, {
+      fields: [userProfileTable.userId],
+      references: [user.id],
+    }),
+    userProfileToSkills: many(userProfileToSkills),
+    userEducation: many(userEducation),
+    userWorkHistory: many(userWorkHistory),
+  }),
+);
 
 export const skills = pgTable("skills", (t) => ({
   id: t.uuid("id").primaryKey().defaultRandom(),

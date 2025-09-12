@@ -2,6 +2,7 @@ import type { TRPCRouterRecord } from "@trpc/server";
 import { TRPCError } from "@trpc/server";
 
 import { BookingRepository } from "../repository/booking.repository";
+import { MentorService } from "../services/mentor.service";
 import { protectedProcedure } from "../trpc";
 import { db } from "~/server/db/client";
 import {
@@ -14,6 +15,7 @@ import {
 } from "~/vlidators/booking";
 
 const bookingRepo = new BookingRepository(db);
+const mentorService = new MentorService(db);
 
 export const bookingRouter = {
   create: protectedProcedure
@@ -69,24 +71,9 @@ export const bookingRouter = {
   }),
 
   getMentorBookings: protectedProcedure.query(async ({ ctx }) => {
-    const userProfile = await db.query.userProfileTable.findFirst({
-      where: (userProfileTable, { eq }) => {
-        return eq(userProfileTable.userId, ctx.session.user.id);
-      },
-    });
-
-    if (!userProfile) {
-      return [];
-    }
-
-    const mentorRecord = await db.query.mentorTable.findFirst({
-      where: (mentorTable, { eq }) => {
-        return eq(mentorTable.userProfileId, userProfile.id);
-      },
-      with: {
-        userProfile: true,
-      },
-    });
+    const mentorRecord = await mentorService.getMentorProfile(
+      ctx.session.user.id,
+    );
 
     if (!mentorRecord) {
       return [];

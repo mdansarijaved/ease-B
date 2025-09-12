@@ -100,7 +100,6 @@ export default function BookingsPage() {
     );
   }
 
-  // Calculate stats for when bookings exist
   const bookingStats = bookings
     ? {
         total: bookings.length,
