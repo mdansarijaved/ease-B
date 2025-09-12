@@ -25,6 +25,10 @@ import {
   Clock,
   DollarSign,
   Loader2,
+  CalendarX,
+  Users,
+  BookOpen,
+  TrendingUp,
 } from "lucide-react";
 import { api } from "~/trpc/react";
 import { format } from "date-fns";
@@ -70,25 +74,155 @@ export default function BookingsPage() {
         <h1 className="text-4xl font-bold">Bookings</h1>
         <Card>
           <CardContent className="pt-6">
-            <p className="text-center text-red-600">
-              Error loading bookings: {error.message}
-            </p>
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <div className="bg-muted mb-4 rounded-full p-6">
+                <CalendarX className="text-muted-foreground h-12 w-12" />
+              </div>
+              <h3 className="mb-2 text-lg font-semibold">
+                Unable to load bookings
+              </h3>
+              <p className="text-muted-foreground mb-6 max-w-md">
+                {error.message.includes("FORBIDDEN") ||
+                error.message.includes("mentor")
+                  ? "It looks like your mentor profile isn't set up yet. Complete your profile setup to start receiving bookings."
+                  : `There was an error loading your bookings: ${error.message}`}
+              </p>
+              <Button
+                onClick={() => window.location.reload()}
+                variant="outline"
+              >
+                Try Again
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
     );
   }
 
+  // Calculate stats for when bookings exist
+  const bookingStats = bookings
+    ? {
+        total: bookings.length,
+        pending: bookings.filter(
+          (b) => (b as unknown as BookingType).status === "pending",
+        ).length,
+        confirmed: bookings.filter(
+          (b) => (b as unknown as BookingType).status === "confirmed",
+        ).length,
+        completed: bookings.filter(
+          (b) => (b as unknown as BookingType).status === "completed",
+        ).length,
+        cancelled: bookings.filter(
+          (b) => (b as unknown as BookingType).status === "cancelled",
+        ).length,
+      }
+    : null;
+
   return (
     <div className="mx-auto max-w-5xl space-y-8 py-10">
-      <h1 className="text-4xl font-bold">Bookings</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-4xl font-bold">Bookings</h1>
+        {bookingStats && bookingStats.total > 0 && (
+          <div className="text-muted-foreground text-sm">
+            Total: {bookingStats.total} bookings
+          </div>
+        )}
+      </div>
+
+      {/* Stats Overview when bookings exist */}
+      {bookingStats && bookingStats.total > 0 && (
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center space-x-2">
+                <Calendar className="h-4 w-4 text-blue-500" />
+                <div>
+                  <p className="text-2xl font-bold">{bookingStats.total}</p>
+                  <p className="text-muted-foreground text-xs">Total</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center space-x-2">
+                <Clock className="h-4 w-4 text-yellow-500" />
+                <div>
+                  <p className="text-2xl font-bold">{bookingStats.pending}</p>
+                  <p className="text-muted-foreground text-xs">Pending</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center space-x-2">
+                <Users className="h-4 w-4 text-green-500" />
+                <div>
+                  <p className="text-2xl font-bold">{bookingStats.confirmed}</p>
+                  <p className="text-muted-foreground text-xs">Confirmed</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center space-x-2">
+                <BookOpen className="h-4 w-4 text-blue-500" />
+                <div>
+                  <p className="text-2xl font-bold">{bookingStats.completed}</p>
+                  <p className="text-muted-foreground text-xs">Completed</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center space-x-2">
+                <CalendarX className="h-4 w-4 text-red-500" />
+                <div>
+                  <p className="text-2xl font-bold">{bookingStats.cancelled}</p>
+                  <p className="text-muted-foreground text-xs">Cancelled</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
       <Tabs defaultValue="all">
         <TabsList>
-          <TabsTrigger value="all">All Bookings</TabsTrigger>
-          <TabsTrigger value="pending">Pending</TabsTrigger>
-          <TabsTrigger value="confirmed">Confirmed</TabsTrigger>
-          <TabsTrigger value="completed">Completed</TabsTrigger>
-          <TabsTrigger value="cancelled">Cancelled</TabsTrigger>
+          <TabsTrigger value="all">
+            All Bookings
+            {bookingStats && (
+              <span className="ml-1 text-xs">({bookingStats.total})</span>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="pending">
+            Pending
+            {bookingStats && (
+              <span className="ml-1 text-xs">({bookingStats.pending})</span>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="confirmed">
+            Confirmed
+            {bookingStats && (
+              <span className="ml-1 text-xs">({bookingStats.confirmed})</span>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="completed">
+            Completed
+            {bookingStats && (
+              <span className="ml-1 text-xs">({bookingStats.completed})</span>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="cancelled">
+            Cancelled
+            {bookingStats && (
+              <span className="ml-1 text-xs">({bookingStats.cancelled})</span>
+            )}
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="all">
           <BookingsTable
@@ -208,10 +342,58 @@ function BookingsTable({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground py-4 text-center">
-            You don&apos;t have any {status ? status.toLowerCase() : ""}{" "}
-            bookings yet.
-          </p>
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <div className="bg-muted mb-4 rounded-full p-6">
+              <CalendarX className="text-muted-foreground h-12 w-12" />
+            </div>
+            <h3 className="mb-2 text-lg font-semibold">
+              {status
+                ? `No ${status.toLowerCase()} bookings`
+                : "No bookings yet"}
+            </h3>
+            <p className="text-muted-foreground mb-6 max-w-md">
+              {status === "pending"
+                ? "You don't have any pending booking requests at the moment. Students will be able to book your services when you set up your availability."
+                : status === "confirmed"
+                  ? "No confirmed bookings scheduled. Pending bookings will appear here once you confirm them."
+                  : status === "completed"
+                    ? "No completed sessions yet. Confirmed bookings will move here after completion."
+                    : status === "cancelled"
+                      ? "No cancelled bookings. This section will show any bookings that were cancelled by you or students."
+                      : "You haven't received any booking requests yet. Make sure your mentor profile and services are set up to start receiving bookings from students."}
+            </p>
+            {!status && (
+              <div className="grid w-full max-w-2xl grid-cols-1 gap-4 md:grid-cols-3">
+                <div className="bg-card flex items-center space-x-3 rounded-lg border p-4">
+                  <Users className="h-8 w-8 text-blue-500" />
+                  <div>
+                    <p className="font-medium">Set up profile</p>
+                    <p className="text-muted-foreground text-sm">
+                      Complete your mentor profile
+                    </p>
+                  </div>
+                </div>
+                <div className="bg-card flex items-center space-x-3 rounded-lg border p-4">
+                  <BookOpen className="h-8 w-8 text-green-500" />
+                  <div>
+                    <p className="font-medium">Add services</p>
+                    <p className="text-muted-foreground text-sm">
+                      Create mentorship services
+                    </p>
+                  </div>
+                </div>
+                <div className="bg-card flex items-center space-x-3 rounded-lg border p-4">
+                  <TrendingUp className="h-8 w-8 text-purple-500" />
+                  <div>
+                    <p className="font-medium">Set availability</p>
+                    <p className="text-muted-foreground text-sm">
+                      Configure your schedule
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </CardContent>
       </Card>
     );
@@ -220,15 +402,31 @@ function BookingsTable({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>
-          {status
-            ? `${statusDisplayMap[status as keyof typeof statusDisplayMap]} Bookings`
-            : "All Bookings"}
-        </CardTitle>
-        <CardDescription>
-          Manage your {status ? status.toLowerCase() : ""} bookings and student
-          sessions.
-        </CardDescription>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="flex items-center gap-2">
+              {status
+                ? `${statusDisplayMap[status as keyof typeof statusDisplayMap]} Bookings`
+                : "All Bookings"}
+              <Badge variant="secondary" className="text-xs">
+                {bookings.length}
+              </Badge>
+            </CardTitle>
+            <CardDescription>
+              Manage your {status ? status.toLowerCase() : ""} bookings and
+              student sessions.
+            </CardDescription>
+          </div>
+          {bookings.length > 0 && (
+            <div className="text-muted-foreground flex items-center gap-2 text-sm">
+              <Calendar className="h-4 w-4" />
+              <span>
+                {bookings.length}{" "}
+                {bookings.length === 1 ? "booking" : "bookings"}
+              </span>
+            </div>
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         <Table>

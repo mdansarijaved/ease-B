@@ -69,23 +69,27 @@ export const bookingRouter = {
   }),
 
   getMentorBookings: protectedProcedure.query(async ({ ctx }) => {
+    const userProfile = await db.query.userProfileTable.findFirst({
+      where: (userProfileTable, { eq }) => {
+        return eq(userProfileTable.userId, ctx.session.user.id);
+      },
+    });
+
+    if (!userProfile) {
+      return [];
+    }
+
     const mentorRecord = await db.query.mentorTable.findFirst({
       where: (mentorTable, { eq }) => {
-        return eq(mentorTable.userProfileId, ctx.session.user.id);
+        return eq(mentorTable.userProfileId, userProfile.id);
       },
       with: {
         userProfile: true,
       },
     });
 
-    if (
-      !mentorRecord ||
-      mentorRecord.userProfile?.userId !== ctx.session.user.id
-    ) {
-      throw new TRPCError({
-        code: "FORBIDDEN",
-        message: "You are not a mentor or don't have access to mentor bookings",
-      });
+    if (!mentorRecord) {
+      return [];
     }
 
     const bookings = await bookingRepo.getMentorBookings(mentorRecord.id);
