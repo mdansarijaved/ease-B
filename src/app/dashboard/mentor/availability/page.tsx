@@ -88,7 +88,6 @@ export default function AvailabilityPage() {
   };
 
   const handleAddInterval = (day: string, interval: TimeInterval) => {
-    // Validate and normalize the interval data
     const normalizedStart = validateAndNormalizeTime(interval.start);
     const normalizedEnd = validateAndNormalizeTime(interval.end);
 
@@ -97,7 +96,6 @@ export default function AvailabilityPage() {
       normalized: { start: normalizedStart, end: normalizedEnd },
     });
 
-    // Basic validation
     if (!normalizedStart || !normalizedEnd) {
       console.error("Invalid time format for interval:", interval);
       toast.error(
@@ -106,7 +104,6 @@ export default function AvailabilityPage() {
       return;
     }
 
-    // Validate start time is before end time
     if (normalizedStart >= normalizedEnd) {
       console.error("Start time must be before end time");
       toast.error("Start time must be before end time");
@@ -155,7 +152,6 @@ export default function AvailabilityPage() {
       sourceIntervals,
     );
 
-    // Validate and normalize all intervals before copying
     const validIntervals = sourceIntervals
       .map((interval) => ({
         start: validateAndNormalizeTime(interval.start),
@@ -178,7 +174,6 @@ export default function AvailabilityPage() {
   const handleSave = () => {
     console.log("Saving availability data:", availability);
 
-    // Validate and normalize all data before sending
     const validatedAvailability: Record<string, TimeInterval[]> = {};
     let hasInvalidTimes = false;
 
@@ -195,7 +190,7 @@ export default function AvailabilityPage() {
             hasInvalidTimes = true;
             return false;
           }
-          // Validate start time is before end time
+
           if (interval.start >= interval.end) {
             hasInvalidTimes = true;
             return false;
