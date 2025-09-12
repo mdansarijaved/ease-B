@@ -8,5 +8,5 @@ export const fetchUserRole = async (userId: string) => {
     .from(UserTable)
     .where(eq(UserTable.id, userId));
 
-  return user[0]?.isAdmin ? "admin" : "user";
+  return user[0]?.role;
 };

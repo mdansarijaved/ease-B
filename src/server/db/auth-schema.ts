@@ -1,16 +1,14 @@
 import { relations } from "drizzle-orm";
-import { pgTable } from "drizzle-orm/pg-core";
+import { pgEnum, pgTable } from "drizzle-orm/pg-core";
 import { communityTable, userToCommunitesMapping } from "./communtiy.schema";
 
+export const userRole = pgEnum("role", ["mentor", "student"]);
 export const user = pgTable("user", (t) => ({
   id: t.text().primaryKey(),
   name: t.text().notNull(),
   email: t.text().notNull().unique(),
   emailVerified: t.boolean().notNull(),
-  role: t
-    .text("role", { enum: ["student", "mentor"] })
-    .notNull()
-    .default("student"),
+  role: userRole().default("student"),
   image: t.text(),
   isAdmin: t.boolean().notNull().default(false),
   createdAt: t.timestamp().notNull(),
