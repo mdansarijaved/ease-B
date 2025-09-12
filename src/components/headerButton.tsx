@@ -17,6 +17,7 @@ import {
 function HeaderButtons() {
   const { data: user, isPending: isSessionLoading } = authClient.useSession();
   const userId = user?.user.id;
+
   const { data: userProfile, isLoading } = api.userProfile.get.useQuery(
     {},
     {
@@ -70,7 +71,7 @@ function HeaderButtons() {
           <DropdownMenuItem>
             <Link href={"/"}>Profile</Link>
           </DropdownMenuItem>
-          <DropdownMenuItem hidden={user.user.role !== "Mentor"}>
+          <DropdownMenuItem hidden={user.user.role !== "mentor"}>
             <Link href={"/dashboard/mentor"}>Dashboard</Link>
           </DropdownMenuItem>
         </DropdownMenuContent>
