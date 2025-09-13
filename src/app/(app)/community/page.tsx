@@ -4,7 +4,7 @@ import { Button } from "~/components/ui/button";
 import Image from "next/image";
 import { Card, CardContent, CardHeader } from "~/components/ui/card";
 import { Users } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+
 const communityCourse = [
   {
     name: "AI & Machine Learning",

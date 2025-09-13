@@ -4,18 +4,11 @@ import {
   Award,
   BarChart,
   Calendar,
-  ChevronRight,
   ChevronsUpDown,
-  Globe,
   Home,
-  Paintbrush,
   Phone,
   Rocket,
-  Settings,
-  Star,
-  User,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
@@ -58,31 +51,14 @@ const menuItems = [
     group: "Your Page",
     items: [
       {
-        href: "/dashboard/mentor/analytics",
-        label: "Analytics",
+        href: "/dashboard/mentor/community",
+        label: "community",
         icon: BarChart,
       },
       {
-        href: "/dashboard/mentor/testimonials",
-        label: "Testimonials",
-        icon: Star,
-      },
-      { href: "/dashboard/mentor/sites", label: "Sites", icon: Globe },
-      {
-        href: "/dashboard/mentor/customize",
-        label: "Customize Page",
-        icon: Paintbrush,
-      },
-      {
-        href: "/dashboard/mentor/profile",
-        label: "Edit Profile",
-        icon: User,
-      },
-      {
-        href: "/dashboard/mentor/settings",
-        label: "Settings",
-        icon: Settings,
-        suffix: <ChevronRight className="h-4 w-4" />,
+        href: "/dashboard/mentor/webinar",
+        label: "Webinar",
+        icon: Award,
       },
     ],
   },
@@ -90,8 +66,8 @@ const menuItems = [
     group: "Advance",
     items: [
       {
-        href: "/dashboard/mentor/rewards",
-        label: "Rewards & Badges",
+        href: "/dashboard/mentor/webinar",
+        label: "Webinar",
         icon: Award,
       },
     ],
@@ -135,6 +111,7 @@ export function MentorSidebar() {
                 const isActive = pathname === item.href;
                 return (
                   <SidebarMenuItem key={item.label}>
+                    {/* @ts-expect-error something */}
                     <Link href={item.href}>
                       <SidebarMenuButton
                         className={cn(
@@ -142,13 +119,9 @@ export function MentorSidebar() {
                           isActive &&
                             "border-primary text-primary font-semibold",
                         )}
-                        variant={isActive ? "secondary" : "ghost"}
                       >
                         <item.icon className="h-5 w-5" />
                         {item.label}
-                        {item.suffix && (
-                          <div className="ml-auto">{item.suffix}</div>
-                        )}
                       </SidebarMenuButton>
                     </Link>
                   </SidebarMenuItem>
