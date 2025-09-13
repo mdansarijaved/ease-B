@@ -46,13 +46,6 @@ import {
 } from "~/components/ui/dialog";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -60,15 +53,7 @@ import { format } from "date-fns";
 export default function CommunityManagementPage() {
   const [activeTab, setActiveTab] = useState("communities");
   const [searchQuery, setSearchQuery] = useState("");
-  const [isCreateCommunityOpen, setIsCreateCommunityOpen] = useState(false);
   const [isCreateWebinarOpen, setIsCreateWebinarOpen] = useState(false);
-  const [newCommunity, setNewCommunity] = useState({
-    name: "",
-    description: "",
-    type: "",
-    image: "",
-    banner: "",
-  });
   const [newWebinar, setNewWebinar] = useState({
     title: "",
     description: "",
@@ -90,24 +75,6 @@ export default function CommunityManagementPage() {
   } = api.webinar.getMyWebinars.useQuery({ page: 1, limit: 20, status: "all" });
 
   const { data: webinarStats } = api.webinar.getStats.useQuery();
-
-  const createCommunityMutation = api.community.create.useMutation({
-    onSuccess: () => {
-      toast.success("Community created successfully!");
-      setIsCreateCommunityOpen(false);
-      setNewCommunity({
-        name: "",
-        description: "",
-        type: "",
-        image: "",
-        banner: "",
-      });
-      void refetchCommunities();
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
 
   const createWebinarMutation = api.webinar.create.useMutation({
     onSuccess: () => {
@@ -166,20 +133,6 @@ export default function CommunityManagementPage() {
       toast.error(error.message);
     },
   });
-
-  const handleCreateCommunity = () => {
-    if (
-      !newCommunity.name ||
-      !newCommunity.description ||
-      !newCommunity.type ||
-      !newCommunity.image
-    ) {
-      toast.error("Please fill in all required fields");
-      return;
-    }
-
-    createCommunityMutation.mutate(newCommunity);
-  };
 
   const handleCreateWebinar = () => {
     if (
@@ -306,135 +259,14 @@ export default function CommunityManagementPage() {
             </div>
 
             {activeTab === "communities" && (
-              <Dialog
-                open={isCreateCommunityOpen}
-                onOpenChange={setIsCreateCommunityOpen}
+              <Button
+                onClick={() =>
+                  (window.location.href = "/dashboard/mentor/community/create")
+                }
               >
-                <DialogTrigger asChild>
-                  <Button>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Create Community
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-2xl">
-                  <DialogHeader>
-                    <DialogTitle>Create New Community</DialogTitle>
-                    <DialogDescription>
-                      Set up a new community for your members to engage and
-                      learn together.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="grid gap-4 py-4">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="name" className="text-right">
-                        Name *
-                      </Label>
-                      <Input
-                        id="name"
-                        value={newCommunity.name}
-                        onChange={(e) =>
-                          setNewCommunity({
-                            ...newCommunity,
-                            name: e.target.value,
-                          })
-                        }
-                        className="col-span-3"
-                        placeholder="Community name"
-                      />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="type" className="text-right">
-                        Type *
-                      </Label>
-                      <Select
-                        value={newCommunity.type}
-                        onValueChange={(value) =>
-                          setNewCommunity({ ...newCommunity, type: value })
-                        }
-                      >
-                        <SelectTrigger className="col-span-3">
-                          <SelectValue placeholder="Select community type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="career">Career</SelectItem>
-                          <SelectItem value="technology">Technology</SelectItem>
-                          <SelectItem value="business">Business</SelectItem>
-                          <SelectItem value="creative">Creative</SelectItem>
-                          <SelectItem value="education">Education</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="image" className="text-right">
-                        Image URL *
-                      </Label>
-                      <Input
-                        id="image"
-                        value={newCommunity.image}
-                        onChange={(e) =>
-                          setNewCommunity({
-                            ...newCommunity,
-                            image: e.target.value,
-                          })
-                        }
-                        className="col-span-3"
-                        placeholder="https://example.com/image.jpg"
-                      />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="banner" className="text-right">
-                        Banner URL
-                      </Label>
-                      <Input
-                        id="banner"
-                        value={newCommunity.banner}
-                        onChange={(e) =>
-                          setNewCommunity({
-                            ...newCommunity,
-                            banner: e.target.value,
-                          })
-                        }
-                        className="col-span-3"
-                        placeholder="https://example.com/banner.jpg"
-                      />
-                    </div>
-                    <div className="grid grid-cols-4 items-start gap-4">
-                      <Label htmlFor="description" className="text-right">
-                        Description *
-                      </Label>
-                      <Textarea
-                        id="description"
-                        value={newCommunity.description}
-                        onChange={(e) =>
-                          setNewCommunity({
-                            ...newCommunity,
-                            description: e.target.value,
-                          })
-                        }
-                        className="col-span-3"
-                        placeholder="Describe your community..."
-                        rows={4}
-                      />
-                    </div>
-                  </div>
-                  <div className="flex justify-end space-x-2">
-                    <Button
-                      variant="outline"
-                      onClick={() => setIsCreateCommunityOpen(false)}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      onClick={handleCreateCommunity}
-                      disabled={createCommunityMutation.isPending}
-                    >
-                      {createCommunityMutation.isPending
-                        ? "Creating..."
-                        : "Create Community"}
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
+                <Plus className="mr-2 h-4 w-4" />
+                Create Community
+              </Button>
             )}
 
             {activeTab === "webinars" && (
@@ -583,7 +415,12 @@ export default function CommunityManagementPage() {
                     : "Create your first community to get started."}
                 </p>
                 {!searchQuery && (
-                  <Button onClick={() => setIsCreateCommunityOpen(true)}>
+                  <Button
+                    onClick={() =>
+                      (window.location.href =
+                        "/dashboard/mentor/community/create")
+                    }
+                  >
                     <Plus className="mr-2 h-4 w-4" />
                     Create Community
                   </Button>
